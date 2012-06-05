@@ -30,6 +30,6 @@ namespace Remoting.Interface
 {
     public interface ICommand
     {
-        void SendCommand(Command command);
+        bool SendCommand(Command command);
     }
 }

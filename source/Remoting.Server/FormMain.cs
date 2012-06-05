@@ -50,8 +50,8 @@ namespace Remoting.Server
                 ChannelServices.RegisterChannel(httpChannel, false);
 
                 RemotingConfiguration.RegisterWellKnownServiceType(
-                  typeof(Remoting.Interface.ICommand),
-                  "RemotingExample/Command.soap", WellKnownObjectMode.SingleCall);
+                    typeof(Remoting.Interface.ICommand),
+                    "RemotingExample/Command.soap", WellKnownObjectMode.SingleCall);
 
                 Command command = new Command();
                 RemotingServices.Marshal(command, "RemotingExample/Command.soap");

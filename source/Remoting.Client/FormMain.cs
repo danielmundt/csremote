@@ -25,6 +25,10 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.Remoting;
+using System.Runtime.Remoting.Channels;
+using System.Runtime.Remoting.Channels.Tcp;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Windows.Forms;
 
@@ -35,9 +39,13 @@ namespace Remoting.Client
 {
     public partial class FormMain : Form
     {
+        delegate bool SendCommandDelegate(Command command);
+        delegate bool RemoteAsyncDelegate(Command command);
+
         public FormMain()
         {
             InitializeComponent();
+            // RegisterChannel();
         }
 
         private void btnStart_Click(object sender, EventArgs e)
@@ -50,13 +58,30 @@ namespace Remoting.Client
             SendCommand(Command.Stop);
         }
 
+        private void RegisterChannel()
+        {
+            TcpChannel tcpChannel = new TcpChannel();
+            ChannelServices.RegisterChannel(tcpChannel, false);
+        }
+
         private void SendCommand(Command command)
         {
             ICommand remoteObject = (ICommand)Activator.GetObject(typeof(ICommand),
-		        "tcp://localhost:9998/RemotingEample.rem");
+		        "tcp://localhost:9000/RemotingExample/Command.rem");
             if (remoteObject != null)
             {
-                remoteObject.SendCommand(command);
+                AsyncCallback remoteCallback = new AsyncCallback(this.RemoteCallback);
+                RemoteAsyncDelegate remoteDelegate = new RemoteAsyncDelegate(remoteObject.SendCommand);
+                IAsyncResult result = remoteDelegate.BeginInvoke(command, remoteCallback, null);
+            }
+        }
+
+        void RemoteCallback(IAsyncResult result)
+        {
+            if (result.IsCompleted)
+            {
+                RemoteAsyncDelegate remoteDelegate = (RemoteAsyncDelegate)((AsyncResult)result).AsyncDelegate;
+                Console.WriteLine(string.Format("Async result: {0}", remoteDelegate.EndInvoke(result)));
             }
         }
     }

@@ -46,15 +46,15 @@ namespace Remoting.Server
         {
             try
             {
-                TcpChannel tcpChannel = new TcpChannel(9998);
+                TcpChannel tcpChannel = new TcpChannel(9000);
                 ChannelServices.RegisterChannel(tcpChannel, false);
 
                 RemotingConfiguration.RegisterWellKnownServiceType(
-                   typeof(Remoting.Interface.ICommand),
-                   "RemotingEample.rem", WellKnownObjectMode.SingleCall);
+                  typeof(Remoting.Interface.ICommand),
+                  "RemotingExample/Command.rem", WellKnownObjectMode.SingleCall);
 
                 Command command = new Command();
-                RemotingServices.Marshal(command, "RemotingEample.rem");
+                RemotingServices.Marshal(command, "RemotingExample/Command.rem");
             }
             catch (SocketException)
             {

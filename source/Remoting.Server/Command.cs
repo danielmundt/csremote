@@ -30,9 +30,10 @@ namespace Remoting.Server
 {
     public class Command : MarshalByRefObject, ICommand
     {
-        public void SendCommand(Remoting.Interface.Enums.Command command)
+        public bool SendCommand(Remoting.Interface.Enums.Command command)
         {
-            int i = 0;
+            Console.WriteLine(string.Format("Command: {0}", command));
+            return false;
         }
     }
 }

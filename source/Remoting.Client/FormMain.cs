@@ -27,7 +27,7 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
-using System.Runtime.Remoting.Channels.Tcp;
+using System.Runtime.Remoting.Channels.Http;
 using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Windows.Forms;
@@ -59,14 +59,14 @@ namespace Remoting.Client
 
         private void RegisterChannel()
         {
-            TcpChannel tcpChannel = new TcpChannel();
-            ChannelServices.RegisterChannel(tcpChannel, false);
+            HttpChannel httpChannel = new HttpChannel();
+            ChannelServices.RegisterChannel(httpChannel, false);
         }
 
         private void SendCommand(Command command)
         {
             ICommand remoteObject = (ICommand)Activator.GetObject(typeof(ICommand),
-		        "tcp://localhost:9000/RemotingExample/Command.rem");
+		        "http://localhost:80/RemotingExample/Command.soap");
             if (remoteObject != null)
             {
                 AsyncCallback remoteCallback = new AsyncCallback(this.RemoteCallback);

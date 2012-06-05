@@ -28,7 +28,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
-using System.Runtime.Remoting.Channels.Tcp;
+using System.Runtime.Remoting.Channels.Http;
 using System.Text;
 using System.Windows.Forms;
 
@@ -46,15 +46,15 @@ namespace Remoting.Server
         {
             try
             {
-                TcpChannel tcpChannel = new TcpChannel(9000);
-                ChannelServices.RegisterChannel(tcpChannel, false);
+                HttpChannel httpChannel = new HttpChannel(80);
+                ChannelServices.RegisterChannel(httpChannel, false);
 
                 RemotingConfiguration.RegisterWellKnownServiceType(
                   typeof(Remoting.Interface.ICommand),
-                  "RemotingExample/Command.rem", WellKnownObjectMode.SingleCall);
+                  "RemotingExample/Command.soap", WellKnownObjectMode.SingleCall);
 
                 Command command = new Command();
-                RemotingServices.Marshal(command, "RemotingExample/Command.rem");
+                RemotingServices.Marshal(command, "RemotingExample/Command.soap");
             }
             catch (SocketException)
             {

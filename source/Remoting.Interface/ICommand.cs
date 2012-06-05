@@ -1,4 +1,4 @@
-﻿#region Header
+#region Header
 
 // Copyright (C) 2012 Daniel Schubert
 //
@@ -28,8 +28,12 @@ using Remoting.Interface.Enums;
 
 namespace Remoting.Interface
 {
-    public interface ICommand
-    {
-        bool SendCommand(Command command);
-    }
+	public interface ICommand
+	{
+		#region Methods
+
+		bool SendCommand(Command command);
+
+		#endregion Methods
+	}
 }

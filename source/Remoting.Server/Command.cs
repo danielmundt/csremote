@@ -1,4 +1,4 @@
-﻿#region Header
+#region Header
 
 // Copyright (C) 2012 Daniel Schubert
 //
@@ -28,12 +28,16 @@ using Remoting.Interface;
 
 namespace Remoting.Server
 {
-    public class Command : MarshalByRefObject, ICommand
-    {
-        public bool SendCommand(Remoting.Interface.Enums.Command command)
-        {
-            Console.WriteLine(string.Format("Command: {0}", command));
-            return false;
-        }
-    }
+	public class Command : MarshalByRefObject, ICommand
+	{
+		#region Methods
+
+		public bool SendCommand(Remoting.Interface.Enums.Command command)
+		{
+			Console.WriteLine(string.Format("Command: {0}", command));
+			return false;
+		}
+
+		#endregion Methods
+	}
 }

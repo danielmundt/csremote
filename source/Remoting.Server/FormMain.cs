@@ -1,4 +1,4 @@
-﻿#region Header
+#region Header
 
 // Copyright (C) 2012 Daniel Schubert
 //
@@ -34,31 +34,39 @@ using System.Windows.Forms;
 
 namespace Remoting.Server
 {
-    public partial class FormMain : Form
-    {
-        public FormMain()
-        {
-            InitializeComponent();
-            CreateServer();
-        }
+	public partial class FormMain : Form
+	{
+		#region Constructors
 
-        private void CreateServer()
-        {
-            try
-            {
-                HttpChannel httpChannel = new HttpChannel(80);
-                ChannelServices.RegisterChannel(httpChannel, false);
+		public FormMain()
+		{
+			InitializeComponent();
+			CreateServer();
+		}
 
-                RemotingConfiguration.RegisterWellKnownServiceType(
-                    typeof(Remoting.Interface.ICommand),
-                    "RemotingExample/Command.soap", WellKnownObjectMode.SingleCall);
+		#endregion Constructors
 
-                Command command = new Command();
-                RemotingServices.Marshal(command, "RemotingExample/Command.soap");
-            }
-            catch (SocketException)
-            {
-            }
-        }
-    }
+		#region Methods
+
+		private void CreateServer()
+		{
+			try
+			{
+				HttpChannel httpChannel = new HttpChannel(80);
+				ChannelServices.RegisterChannel(httpChannel, false);
+
+				RemotingConfiguration.RegisterWellKnownServiceType(
+					typeof(Remoting.Interface.ICommand),
+					"RemotingExample/Command.soap", WellKnownObjectMode.SingleCall);
+
+				Command command = new Command();
+				RemotingServices.Marshal(command, "RemotingExample/Command.soap");
+			}
+			catch (SocketException)
+			{
+			}
+		}
+
+		#endregion Methods
+	}
 }

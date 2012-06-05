@@ -1,4 +1,4 @@
-﻿#region Header
+#region Header
 
 // Copyright (C) 2012 Daniel Schubert
 //
@@ -26,9 +26,13 @@ using System.Text;
 
 namespace Remoting.Interface.Enums
 {
-    public enum Command
-    {
-        Start,
-        Stop
-    }
+	#region Enumerations
+
+	public enum Command
+	{
+		Start,
+		Stop
+	}
+
+	#endregion Enumerations
 }

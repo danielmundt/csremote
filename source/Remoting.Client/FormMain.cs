@@ -39,13 +39,12 @@ namespace Remoting.Client
 {
     public partial class FormMain : Form
     {
-        delegate bool SendCommandDelegate(Command command);
         delegate bool RemoteAsyncDelegate(Command command);
 
         public FormMain()
         {
             InitializeComponent();
-            // RegisterChannel();
+            RegisterChannel();
         }
 
         private void btnStart_Click(object sender, EventArgs e)
@@ -78,11 +77,8 @@ namespace Remoting.Client
 
         void RemoteCallback(IAsyncResult result)
         {
-            if (result.IsCompleted)
-            {
-                RemoteAsyncDelegate remoteDelegate = (RemoteAsyncDelegate)((AsyncResult)result).AsyncDelegate;
-                Console.WriteLine(string.Format("Async result: {0}", remoteDelegate.EndInvoke(result)));
-            }
+            RemoteAsyncDelegate remoteDelegate = (RemoteAsyncDelegate)((AsyncResult)result).AsyncDelegate;
+            Console.WriteLine(string.Format("Async result: {0}", remoteDelegate.EndInvoke(result)));
         }
     }
 }

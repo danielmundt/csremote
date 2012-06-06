@@ -25,10 +25,6 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Runtime.Remoting;
-using System.Runtime.Remoting.Channels;
-using System.Runtime.Remoting.Channels.Http;
-using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Windows.Forms;
 
@@ -39,56 +35,32 @@ namespace Remoting.Client
 {
 	public partial class FormMain : Form
 	{
+		#region Fields
+
+		private Client client = new Client();
+
+		#endregion Fields
+
 		#region Constructors
 
 		public FormMain()
 		{
 			InitializeComponent();
-			RegisterChannel();
+			client.RegisterChannel();
 		}
 
 		#endregion Constructors
-
-		#region Delegates
-
-		delegate bool RemoteAsyncDelegate(Command command);
-
-		#endregion Delegates
 
 		#region Methods
 
 		private void btnStart_Click(object sender, EventArgs e)
 		{
-			SendCommand(Command.Start);
+			client.SendCommand(Command.Start);
 		}
 
 		private void btnStop_Click(object sender, EventArgs e)
 		{
-			SendCommand(Command.Stop);
-		}
-
-		private void RegisterChannel()
-		{
-			HttpChannel httpChannel = new HttpChannel();
-			ChannelServices.RegisterChannel(httpChannel, false);
-		}
-
-		void RemoteCallback(IAsyncResult result)
-		{
-			RemoteAsyncDelegate remoteDelegate = (RemoteAsyncDelegate)((AsyncResult)result).AsyncDelegate;
-			Console.WriteLine(string.Format("Async result: {0}", remoteDelegate.EndInvoke(result)));
-		}
-
-		private void SendCommand(Command command)
-		{
-			ICommand remoteObject = (ICommand)Activator.GetObject(typeof(ICommand),
-				"http://localhost:80/RemotingExample/Command.soap");
-			if (remoteObject != null)
-			{
-				AsyncCallback remoteCallback = new AsyncCallback(this.RemoteCallback);
-				RemoteAsyncDelegate remoteDelegate = new RemoteAsyncDelegate(remoteObject.SendCommand);
-				IAsyncResult result = remoteDelegate.BeginInvoke(command, remoteCallback, null);
-			}
+			client.SendCommand(Command.Stop);
 		}
 
 		#endregion Methods

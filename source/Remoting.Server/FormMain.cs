@@ -25,10 +25,6 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Net.Sockets;
-using System.Runtime.Remoting;
-using System.Runtime.Remoting.Channels;
-using System.Runtime.Remoting.Channels.Http;
 using System.Text;
 using System.Windows.Forms;
 
@@ -36,37 +32,20 @@ namespace Remoting.Server
 {
 	public partial class FormMain : Form
 	{
+		#region Fields
+
+		private Server server = new Server();
+
+		#endregion Fields
+
 		#region Constructors
 
 		public FormMain()
 		{
 			InitializeComponent();
-			CreateServer();
+			server.Create();
 		}
 
 		#endregion Constructors
-
-		#region Methods
-
-		private void CreateServer()
-		{
-			try
-			{
-				HttpChannel httpChannel = new HttpChannel(80);
-				ChannelServices.RegisterChannel(httpChannel, false);
-
-				RemotingConfiguration.RegisterWellKnownServiceType(
-					typeof(Remoting.Interface.ICommand),
-					"RemotingExample/Command.soap", WellKnownObjectMode.SingleCall);
-
-				Command command = new Command();
-				RemotingServices.Marshal(command, "RemotingExample/Command.soap");
-			}
-			catch (SocketException)
-			{
-			}
-		}
-
-		#endregion Methods
 	}
 }

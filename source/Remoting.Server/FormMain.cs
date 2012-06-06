@@ -32,20 +32,37 @@ namespace Remoting.Server
 {
 	public partial class FormMain : Form
 	{
-		#region Fields
-
-		private Server server = new Server();
-
-		#endregion Fields
-
 		#region Constructors
 
 		public FormMain()
 		{
 			InitializeComponent();
-			server.Create();
+			InitializeServer();
 		}
 
 		#endregion Constructors
+
+		#region Properties
+
+		public TextBox LogTextBox
+		{
+			get
+			{
+				return this.tbLog;
+			}
+		}
+
+		#endregion Properties
+
+		#region Methods
+
+		private void InitializeServer()
+		{
+			Context context = new Context(this);
+			Server server = new Server();
+			server.Create(context);
+		}
+
+		#endregion Methods
 	}
 }

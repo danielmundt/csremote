@@ -1,4 +1,4 @@
-﻿#region Header
+#region Header
 
 // Copyright (C) 2012 Daniel Schubert
 //
@@ -36,7 +36,7 @@ namespace Remoting.Server
 	{
 		#region Methods
 
-		public void Create()
+		public void Create(Context context)
 		{
 			try
 			{
@@ -47,7 +47,7 @@ namespace Remoting.Server
 					typeof(Remoting.Service.ICommand),
 					Constants.ObjectUri, WellKnownObjectMode.SingleCall);
 
-                Command command = new Command(new Context());
+				Command command = new Command(context);
 				RemotingServices.Marshal(command, Constants.ObjectUri);
 			}
 			catch (SocketException)

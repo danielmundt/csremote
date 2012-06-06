@@ -30,18 +30,26 @@ namespace Remoting.Server
 {
 	public class Command : MarshalByRefObject, ICommand
 	{
-        private Context context;
+		#region Fields
 
-        public Command(Context context)
-        {
-            this.context = context;
-        }
+		private Context context;
+
+		#endregion Fields
+
+		#region Constructors
+
+		public Command(Context context)
+		{
+			this.context = context;
+		}
+
+		#endregion Constructors
 
 		#region Methods
 
 		public bool SendCommand(Remoting.Service.Enums.Command command)
 		{
-			Console.WriteLine(string.Format("Command: {0}", command));
+            context.SetLog(string.Format("Received command: {0}", command));
 			return false;
 		}
 

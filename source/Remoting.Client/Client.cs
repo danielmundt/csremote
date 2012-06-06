@@ -1,4 +1,4 @@
-﻿#region Header
+#region Header
 
 // Copyright (C) 2012 Daniel Schubert
 //
@@ -81,13 +81,13 @@ namespace Remoting.Client
 		{
 			try
 			{
-                // asynchronously execute remote command
+				// asynchronously execute remote command
 				AsyncCommandDelegate remoteDelegate =
 					(AsyncCommandDelegate)((AsyncResult)asyncResult).AsyncDelegate;
 				object userState = remoteDelegate.EndInvoke(asyncResult);
 				AsyncCompletedEventArgs completedArgs = new AsyncCompletedEventArgs(null, false, userState);
 
-                // raise the completed event
+				// raise the completed event
 				AsyncOperation asyncOperation = (AsyncOperation)asyncResult.AsyncState;
 				asyncOperation.PostOperationCompleted(delegate(object e)
 					{ OnCommandCompleted((AsyncCompletedEventArgs)e); }, completedArgs);

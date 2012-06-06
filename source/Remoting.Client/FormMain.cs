@@ -37,7 +37,7 @@ namespace Remoting.Client
 	{
 		#region Fields
 
-		private Client client = new Client();
+		private Client client;
 
 		#endregion Fields
 
@@ -46,7 +46,7 @@ namespace Remoting.Client
 		public FormMain()
 		{
 			InitializeComponent();
-			client.RegisterChannel();
+			InitializeClient();
 		}
 
 		#endregion Constructors
@@ -61,6 +61,12 @@ namespace Remoting.Client
 		private void btnStop_Click(object sender, EventArgs e)
 		{
 			client.SendCommand(Command.Stop);
+		}
+
+		private void InitializeClient()
+		{
+			client = new Client();
+			client.RegisterChannel();
 		}
 
 		#endregion Methods

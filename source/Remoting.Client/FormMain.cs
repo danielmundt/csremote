@@ -25,7 +25,10 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.Remoting;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 
 using Remoting.Service;
@@ -63,16 +66,17 @@ namespace Remoting.Client
 			client.SendCommand(Command.Stop);
 		}
 
+		private void CommandCompletedHandler(object sender, AsyncCompletedEventArgs e)
+		{
+			tbLog.AppendText(string.Format("Async result: {0}", (int)e.UserState));
+			tbLog.AppendText(Environment.NewLine);
+		}
+
 		private void InitializeClient()
 		{
 			client = new Client();
+			client.CommandCompleted += new EventHandler<AsyncCompletedEventArgs>(CommandCompletedHandler);
 			client.RegisterChannel();
-			client.ResultReceived += new EventHandler<ResultEventArgs>(ResultReceivedHandler);
-		}
-
-		private void ResultReceivedHandler(object sender, ResultEventArgs e)
-		{
-			Console.WriteLine(string.Format("Async result: {0}", e.Result));
 		}
 
 		#endregion Methods

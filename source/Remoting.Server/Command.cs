@@ -21,8 +21,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 using Remoting.Service;
 
@@ -47,10 +49,10 @@ namespace Remoting.Server
 
 		#region Methods
 
-		public bool SendCommand(Remoting.Service.Enums.Command command)
+		public int SendCommand(Remoting.Service.Enums.Command command)
 		{
 			context.SetLog(string.Format("Received command: {0}", command));
-			return false;
+			return Process.GetCurrentProcess().Id;
 		}
 
 		#endregion Methods

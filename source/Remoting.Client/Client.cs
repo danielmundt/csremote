@@ -1,4 +1,4 @@
-#region Header
+﻿#region Header
 
 // Copyright (C) 2012 Daniel Schubert
 //
@@ -21,6 +21,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
@@ -37,13 +38,13 @@ namespace Remoting.Client
 	{
 		#region Delegates
 
-		delegate bool RemoteAsyncDelegate(Command command);
+		public delegate int AsyncCommandDelegate(Command command);
 
 		#endregion Delegates
 
 		#region Events
 
-		public event EventHandler<ResultEventArgs> ResultReceived;
+		public event EventHandler<AsyncCompletedEventArgs> CommandCompleted;
 
 		#endregion Events
 
@@ -61,26 +62,35 @@ namespace Remoting.Client
 				string.Format("http://localhost:{0}/{1}", Constants.ServerHttpPort, Constants.CommandServiceUri));
 			if (remoteObject != null)
 			{
-				AsyncCallback remoteCallback = new AsyncCallback(this.RemoteCallback);
-				RemoteAsyncDelegate remoteDelegate = new RemoteAsyncDelegate(remoteObject.SendCommand);
-				IAsyncResult result = remoteDelegate.BeginInvoke(command, remoteCallback, null);
+				AsyncCallback remoteCallback = new AsyncCallback(RemoteCallback);
+				AsyncOperation asyncOperation = AsyncOperationManager.CreateOperation(null);
+				AsyncCommandDelegate remoteDelegate = new AsyncCommandDelegate(remoteObject.SendCommand);
+				IAsyncResult result = remoteDelegate.BeginInvoke(command, remoteCallback, asyncOperation);
 			}
 		}
 
-		private void OnResultReceived(object sender, ResultEventArgs e)
+		private void OnCommandCompleted(AsyncCompletedEventArgs e)
 		{
-			if (ResultReceived != null)
+			if (CommandCompleted != null)
 			{
-				ResultReceived(sender, e);
+				CommandCompleted(this, e);
 			}
 		}
 
-		void RemoteCallback(IAsyncResult result)
+		private void RemoteCallback(IAsyncResult asyncResult)
 		{
 			try
 			{
-				RemoteAsyncDelegate remoteDelegate = (RemoteAsyncDelegate)((AsyncResult)result).AsyncDelegate;
-				OnResultReceived(this, new ResultEventArgs(remoteDelegate.EndInvoke(result)));
+                // asynchronously execute remote command
+				AsyncCommandDelegate remoteDelegate =
+					(AsyncCommandDelegate)((AsyncResult)asyncResult).AsyncDelegate;
+				object userState = remoteDelegate.EndInvoke(asyncResult);
+				AsyncCompletedEventArgs completedArgs = new AsyncCompletedEventArgs(null, false, userState);
+
+                // raise the completed event
+				AsyncOperation asyncOperation = (AsyncOperation)asyncResult.AsyncState;
+				asyncOperation.PostOperationCompleted(delegate(object e)
+					{ OnCommandCompleted((AsyncCompletedEventArgs)e); }, completedArgs);
 			}
 			catch (System.Net.WebException exception)
 			{

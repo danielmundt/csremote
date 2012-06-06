@@ -32,7 +32,7 @@ namespace Remoting.Service
 	{
 		#region Methods
 
-		bool SendCommand(Command command);
+		int SendCommand(Command command);
 
 		#endregion Methods
 	}

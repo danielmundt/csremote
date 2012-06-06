@@ -1,4 +1,4 @@
-#region Header
+﻿#region Header
 
 // Copyright (C) 2012 Daniel Schubert
 //
@@ -40,15 +40,15 @@ namespace Remoting.Server
 		{
 			try
 			{
-				HttpChannel httpChannel = new HttpChannel(Constants.HttpPort);
+				HttpChannel httpChannel = new HttpChannel(Constants.ServerHttpPort);
 				ChannelServices.RegisterChannel(httpChannel, false);
 
 				RemotingConfiguration.RegisterWellKnownServiceType(
 					typeof(Remoting.Service.ICommand),
-					Constants.ObjectUri, WellKnownObjectMode.SingleCall);
+					Constants.CommandServiceUri, WellKnownObjectMode.SingleCall);
 
 				Command command = new Command(context);
-				RemotingServices.Marshal(command, Constants.ObjectUri);
+				RemotingServices.Marshal(command, Constants.CommandServiceUri);
 			}
 			catch (SocketException)
 			{

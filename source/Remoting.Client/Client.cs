@@ -52,7 +52,7 @@ namespace Remoting.Client
 		public void SendCommand(Command command)
 		{
 			ICommand remoteObject = (ICommand)Activator.GetObject(typeof(ICommand),
-				string.Format("http://localhost:{0}/{1}", Constants.HttpPort, Constants.ObjectUri));
+				string.Format("http://localhost:{0}/{1}", Constants.ServerHttpPort, Constants.CommandServiceUri));
 			if (remoteObject != null)
 			{
 				AsyncCallback remoteCallback = new AsyncCallback(this.RemoteCallback);

@@ -1,4 +1,4 @@
-﻿#region Header
+#region Header
 
 // Copyright (C) 2012 Daniel Schubert
 //
@@ -30,8 +30,8 @@ namespace Remoting.Service
 	{
 		#region Fields
 
-		public const int HttpPort = 80;
-		public const string ObjectUri = "RemotingExample/Command.soap";
+		public const string CommandServiceUri = "RemotingExample/Command.soap";
+		public const int ServerHttpPort = 80;
 
 		#endregion Fields
 	}

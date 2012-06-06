@@ -1,4 +1,4 @@
-﻿#region Header
+#region Header
 
 // Copyright (C) 2012 Daniel Schubert
 //
@@ -33,47 +33,61 @@ using Remoting.Service.Enums;
 
 namespace Remoting.Client
 {
-    class Client
-    {
-        #region Delegates
+	class Client
+	{
+		#region Delegates
 
-        delegate bool RemoteAsyncDelegate(Command command);
+		delegate bool RemoteAsyncDelegate(Command command);
 
-        #endregion Delegates
+		#endregion Delegates
 
-        #region Methods
+		#region Events
 
-        public void RegisterChannel()
-        {
-            HttpChannel httpChannel = new HttpChannel();
-            ChannelServices.RegisterChannel(httpChannel, false);
-        }
+		public event EventHandler<ResultEventArgs> ResultReceived;
 
-        public void SendCommand(Command command)
-        {
-            ICommand remoteObject = (ICommand)Activator.GetObject(typeof(ICommand),
-                string.Format("http://localhost:{0}/{1}", Constants.ServerHttpPort, Constants.CommandServiceUri));
-            if (remoteObject != null)
-            {
-                AsyncCallback remoteCallback = new AsyncCallback(this.RemoteCallback);
-                RemoteAsyncDelegate remoteDelegate = new RemoteAsyncDelegate(remoteObject.SendCommand);
-                IAsyncResult result = remoteDelegate.BeginInvoke(command, remoteCallback, null);
-            }
-        }
+		#endregion Events
 
-        void RemoteCallback(IAsyncResult result)
-        {
-            try
-            {
-                RemoteAsyncDelegate remoteDelegate = (RemoteAsyncDelegate)((AsyncResult)result).AsyncDelegate;
-                Console.WriteLine(string.Format("Async result: {0}", remoteDelegate.EndInvoke(result)));
-            }
-            catch (System.Net.WebException exception)
-            {
-                Console.WriteLine("Error: " + exception.Message);
-            }
-        }
+		#region Methods
 
-        #endregion Methods
-    }
+		public void RegisterChannel()
+		{
+			HttpChannel httpChannel = new HttpChannel();
+			ChannelServices.RegisterChannel(httpChannel, false);
+		}
+
+		public void SendCommand(Command command)
+		{
+			ICommand remoteObject = (ICommand)Activator.GetObject(typeof(ICommand),
+				string.Format("http://localhost:{0}/{1}", Constants.ServerHttpPort, Constants.CommandServiceUri));
+			if (remoteObject != null)
+			{
+				AsyncCallback remoteCallback = new AsyncCallback(this.RemoteCallback);
+				RemoteAsyncDelegate remoteDelegate = new RemoteAsyncDelegate(remoteObject.SendCommand);
+				IAsyncResult result = remoteDelegate.BeginInvoke(command, remoteCallback, null);
+			}
+		}
+
+		private void OnResultReceived(object sender, ResultEventArgs e)
+		{
+			if (ResultReceived != null)
+			{
+				ResultReceived(sender, e);
+			}
+		}
+
+		void RemoteCallback(IAsyncResult result)
+		{
+			try
+			{
+				RemoteAsyncDelegate remoteDelegate = (RemoteAsyncDelegate)((AsyncResult)result).AsyncDelegate;
+				OnResultReceived(this, new ResultEventArgs(remoteDelegate.EndInvoke(result)));
+			}
+			catch (System.Net.WebException exception)
+			{
+				Console.WriteLine("Error: " + exception.Message);
+			}
+		}
+
+		#endregion Methods
+	}
 }

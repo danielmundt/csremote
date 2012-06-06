@@ -58,9 +58,15 @@ namespace Remoting.Server
 
 		private void InitializeServer()
 		{
-			Context context = new Context(this);
+			/* Context context = new Context(this);
 			Server server = new Server();
-			server.Create(context);
+			Command command = new Command(context);
+			server.Create(command); */
+
+			Command command = new Command(new Context(this));
+
+			Server server = new Server();
+			server.Create(command);
 		}
 
 		#endregion Methods

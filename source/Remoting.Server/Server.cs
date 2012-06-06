@@ -1,4 +1,4 @@
-﻿#region Header
+#region Header
 
 // Copyright (C) 2012 Daniel Schubert
 //
@@ -36,23 +36,16 @@ namespace Remoting.Server
 	{
 		#region Methods
 
-		public void Create(Context context)
+		public void Create(MarshalByRefObject refObject)
 		{
-			try
-			{
-				HttpChannel httpChannel = new HttpChannel(Constants.ServerHttpPort);
-				ChannelServices.RegisterChannel(httpChannel, false);
+			HttpChannel httpChannel = new HttpChannel(Constants.ServerHttpPort);
+			ChannelServices.RegisterChannel(httpChannel, false);
 
-				RemotingConfiguration.RegisterWellKnownServiceType(
-					typeof(Remoting.Service.ICommand),
-					Constants.CommandServiceUri, WellKnownObjectMode.SingleCall);
+			RemotingConfiguration.RegisterWellKnownServiceType(
+				typeof(Remoting.Service.ICommand),
+				Constants.CommandServiceUri, WellKnownObjectMode.Singleton);
 
-				Command command = new Command(context);
-				RemotingServices.Marshal(command, Constants.CommandServiceUri);
-			}
-			catch (SocketException)
-			{
-			}
+			RemotingServices.Marshal(refObject, Constants.CommandServiceUri);
 		}
 
 		#endregion Methods

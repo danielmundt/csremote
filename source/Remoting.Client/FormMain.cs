@@ -67,6 +67,12 @@ namespace Remoting.Client
 		{
 			client = new Client();
 			client.RegisterChannel();
+			client.ResultReceived += new EventHandler<ResultEventArgs>(ResultReceivedHandler);
+		}
+
+		private void ResultReceivedHandler(object sender, ResultEventArgs e)
+		{
+			Console.WriteLine(string.Format("Async result: {0}", e.Result));
 		}
 
 		#endregion Methods

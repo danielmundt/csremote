@@ -33,40 +33,47 @@ using Remoting.Service.Enums;
 
 namespace Remoting.Client
 {
-	class Client
-	{
-		#region Delegates
+    class Client
+    {
+        #region Delegates
 
-		delegate bool RemoteAsyncDelegate(Command command);
+        delegate bool RemoteAsyncDelegate(Command command);
 
-		#endregion Delegates
+        #endregion Delegates
 
-		#region Methods
+        #region Methods
 
-		public void RegisterChannel()
-		{
-			HttpChannel httpChannel = new HttpChannel();
-			ChannelServices.RegisterChannel(httpChannel, false);
-		}
+        public void RegisterChannel()
+        {
+            HttpChannel httpChannel = new HttpChannel();
+            ChannelServices.RegisterChannel(httpChannel, false);
+        }
 
-		public void SendCommand(Command command)
-		{
-			ICommand remoteObject = (ICommand)Activator.GetObject(typeof(ICommand),
-				string.Format("http://localhost:{0}/{1}", Constants.ServerHttpPort, Constants.CommandServiceUri));
-			if (remoteObject != null)
-			{
-				AsyncCallback remoteCallback = new AsyncCallback(this.RemoteCallback);
-				RemoteAsyncDelegate remoteDelegate = new RemoteAsyncDelegate(remoteObject.SendCommand);
-				IAsyncResult result = remoteDelegate.BeginInvoke(command, remoteCallback, null);
-			}
-		}
+        public void SendCommand(Command command)
+        {
+            ICommand remoteObject = (ICommand)Activator.GetObject(typeof(ICommand),
+                string.Format("http://localhost:{0}/{1}", Constants.ServerHttpPort, Constants.CommandServiceUri));
+            if (remoteObject != null)
+            {
+                AsyncCallback remoteCallback = new AsyncCallback(this.RemoteCallback);
+                RemoteAsyncDelegate remoteDelegate = new RemoteAsyncDelegate(remoteObject.SendCommand);
+                IAsyncResult result = remoteDelegate.BeginInvoke(command, remoteCallback, null);
+            }
+        }
 
-		void RemoteCallback(IAsyncResult result)
-		{
-			RemoteAsyncDelegate remoteDelegate = (RemoteAsyncDelegate)((AsyncResult)result).AsyncDelegate;
-			Console.WriteLine(string.Format("Async result: {0}", remoteDelegate.EndInvoke(result)));
-		}
+        void RemoteCallback(IAsyncResult result)
+        {
+            try
+            {
+                RemoteAsyncDelegate remoteDelegate = (RemoteAsyncDelegate)((AsyncResult)result).AsyncDelegate;
+                Console.WriteLine(string.Format("Async result: {0}", remoteDelegate.EndInvoke(result)));
+            }
+            catch (System.Net.WebException exception)
+            {
+                Console.WriteLine("Error: " + exception.Message);
+            }
+        }
 
-		#endregion Methods
-	}
+        #endregion Methods
+    }
 }

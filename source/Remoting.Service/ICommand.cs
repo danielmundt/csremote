@@ -24,9 +24,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Remoting.Interface.Enums;
+using Remoting.Service.Enums;
 
-namespace Remoting.Interface
+namespace Remoting.Service
 {
 	public interface ICommand
 	{

@@ -1,4 +1,4 @@
-#region Header
+﻿#region Header
 
 // Copyright (C) 2012 Daniel Schubert
 //
@@ -28,8 +28,8 @@ using System.Runtime.Remoting.Channels.Http;
 using System.Runtime.Remoting.Messaging;
 using System.Text;
 
-using Remoting.Interface;
-using Remoting.Interface.Enums;
+using Remoting.Service;
+using Remoting.Service.Enums;
 
 namespace Remoting.Client
 {

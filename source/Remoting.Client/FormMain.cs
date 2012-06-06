@@ -28,8 +28,8 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-using Remoting.Interface;
-using Remoting.Interface.Enums;
+using Remoting.Service;
+using Remoting.Service.Enums;
 
 namespace Remoting.Client
 {

@@ -1,4 +1,4 @@
-#region Header
+﻿#region Header
 
 // Copyright (C) 2012 Daniel Schubert
 //
@@ -28,7 +28,7 @@ using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Http;
 using System.Text;
 
-using Remoting.Interface;
+using Remoting.Service;
 
 namespace Remoting.Server
 {
@@ -44,7 +44,7 @@ namespace Remoting.Server
 				ChannelServices.RegisterChannel(httpChannel, false);
 
 				RemotingConfiguration.RegisterWellKnownServiceType(
-					typeof(Remoting.Interface.ICommand),
+					typeof(Remoting.Service.ICommand),
 					Constants.ObjectUri, WellKnownObjectMode.SingleCall);
 
 				Command command = new Command();

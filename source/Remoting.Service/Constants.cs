@@ -24,7 +24,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Remoting.Interface
+namespace Remoting.Service
 {
 	public static class Constants
 	{

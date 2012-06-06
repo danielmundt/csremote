@@ -82,9 +82,9 @@
     <Compile Include="Server.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Remoting.Interface\Remoting.Interface.csproj">
-      <Project>{C3CE76AE-3E45-405A-8E27-0F2B6C5EF59B}</Project>
-      <Name>Remoting.Interface</Name>
+    <ProjectReference Include="..\Remoting.Service\Remoting.Service.csproj">
+      <Project>{5018F0BB-8CFA-46B5-8A21-F9A1AB8FFD05}</Project>
+      <Name>Remoting.Service</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

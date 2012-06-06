@@ -24,7 +24,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Remoting.Interface;
+using Remoting.Service;
 
 namespace Remoting.Server
 {
@@ -32,7 +32,7 @@ namespace Remoting.Server
 	{
 		#region Methods
 
-		public bool SendCommand(Remoting.Interface.Enums.Command command)
+		public bool SendCommand(Remoting.Service.Enums.Command command)
 		{
 			Console.WriteLine(string.Format("Command: {0}", command));
 			return false;

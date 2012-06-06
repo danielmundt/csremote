@@ -24,7 +24,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Remoting.Interface.Enums
+namespace Remoting.Service.Enums
 {
 	#region Enumerations
 

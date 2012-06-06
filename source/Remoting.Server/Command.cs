@@ -49,7 +49,7 @@ namespace Remoting.Server
 
 		public bool SendCommand(Remoting.Service.Enums.Command command)
 		{
-            context.SetLog(string.Format("Received command: {0}", command));
+			context.SetLog(string.Format("Received command: {0}", command));
 			return false;
 		}
 

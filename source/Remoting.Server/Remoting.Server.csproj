@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Command.cs" />
+    <Compile Include="Context.cs" />
     <Compile Include="FormMain.cs">
       <SubType>Form</SubType>
     </Compile>

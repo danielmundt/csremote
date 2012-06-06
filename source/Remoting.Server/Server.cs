@@ -47,7 +47,7 @@ namespace Remoting.Server
 					typeof(Remoting.Service.ICommand),
 					Constants.ObjectUri, WellKnownObjectMode.SingleCall);
 
-				Command command = new Command();
+                Command command = new Command(new Context());
 				RemotingServices.Marshal(command, Constants.ObjectUri);
 			}
 			catch (SocketException)

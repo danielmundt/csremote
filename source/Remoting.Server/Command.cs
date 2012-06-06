@@ -30,6 +30,13 @@ namespace Remoting.Server
 {
 	public class Command : MarshalByRefObject, ICommand
 	{
+        private Context context;
+
+        public Command(Context context)
+        {
+            this.context = context;
+        }
+
 		#region Methods
 
 		public bool SendCommand(Remoting.Service.Enums.Command command)

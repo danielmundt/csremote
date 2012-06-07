@@ -51,6 +51,19 @@ namespace Remoting.Client
 
 		#region Methods
 
+		public void SendMessage()
+		{
+			try
+			{
+				RemoteMessage remoteMessage = new RemoteMessage();
+				remoteMessage.Send("Hello World");
+			}
+			catch (RemotingException ex)
+			{
+				MessageBox.Show(this, ex.Message, "Error");
+			}
+		}
+
 		private void btnSend_Click(object sender, EventArgs e)
 		{
 			SendMessage();
@@ -58,27 +71,14 @@ namespace Remoting.Client
 
 		private void InitializeClient()
 		{
-            // create and register the channel
-            IpcClientChannel clientChannel = new IpcClientChannel();
-            ChannelServices.RegisterChannel(clientChannel, false);
+			// create and register the channel
+			IpcClientChannel clientChannel = new IpcClientChannel();
+			ChannelServices.RegisterChannel(clientChannel, false);
 
-            // expose object for remote calls
-            RemotingConfiguration.RegisterWellKnownClientType(
-                typeof(RemoteMessage), "ipc://remote/message");
+			// expose object for remote calls
+			RemotingConfiguration.RegisterWellKnownClientType(
+				typeof(RemoteMessage), "ipc://remote/message");
 		}
-
-        public void SendMessage()
-        {
-            try
-            {
-                RemoteMessage remoteMessage = new RemoteMessage();
-                remoteMessage.Send("Hello World");
-            }
-            catch (RemotingException ex)
-            {
-                MessageBox.Show(this, ex.Message, "Error");
-            }
-        }
 
 		#endregion Methods
 	}

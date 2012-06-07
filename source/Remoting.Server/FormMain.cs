@@ -50,18 +50,18 @@ namespace Remoting.Server
 
 		private void InitializeServer()
 		{
-            RemoteMessage remoteMessage = new RemoteMessage();
+			RemoteMessage remoteMessage = new RemoteMessage();
 			remoteMessage.MessageReceived +=
 				new EventHandler<MessageReceivedEventArgs>(MessageReceivedHandler);
 
-            // create and register the server channel
-            IpcServerChannel serverChannel = new IpcServerChannel("remote");
-            ChannelServices.RegisterChannel(serverChannel, false);
+			// create and register the server channel
+			IpcServerChannel serverChannel = new IpcServerChannel("remote");
+			ChannelServices.RegisterChannel(serverChannel, false);
 
-            // expose object for remote calls
-            RemotingConfiguration.RegisterWellKnownServiceType(
-                typeof(RemoteMessage), "message", WellKnownObjectMode.SingleCall);
-            RemotingServices.Marshal(remoteMessage, "message");
+			// expose object for remote calls
+			RemotingConfiguration.RegisterWellKnownServiceType(
+				typeof(RemoteMessage), "message", WellKnownObjectMode.SingleCall);
+			RemotingServices.Marshal(remoteMessage, "message");
 		}
 
 		private void MessageReceivedHandler(object sender, MessageReceivedEventArgs e)

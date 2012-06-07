@@ -60,8 +60,8 @@ namespace Remoting.Server
 
             // expose object for remote calls
             RemotingConfiguration.RegisterWellKnownServiceType(
-                typeof(RemoteMessage), "command", WellKnownObjectMode.Singleton);
-            RemotingServices.Marshal(remoteMessage, "command");
+                typeof(RemoteMessage), "message", WellKnownObjectMode.Singleton);
+            RemotingServices.Marshal(remoteMessage, "message");
 		}
 
 		private void MessageReceivedHandler(object sender, MessageReceivedEventArgs e)

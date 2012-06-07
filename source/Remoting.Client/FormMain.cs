@@ -64,7 +64,7 @@ namespace Remoting.Client
 
             // expose object for remote calls
             RemotingConfiguration.RegisterWellKnownClientType(
-                typeof(RemoteMessage), "ipc://remote/command");
+                typeof(RemoteMessage), "ipc://remote/message");
 		}
 
         public void SendMessage()

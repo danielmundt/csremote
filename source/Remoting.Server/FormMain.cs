@@ -78,6 +78,7 @@ namespace Remoting.Server
 
 		private void SetText(string text)
 		{
+			// thread-safe call
 			if (tbLog.InvokeRequired)
 			{
 				SetTextCallback d = new SetTextCallback(SetText);

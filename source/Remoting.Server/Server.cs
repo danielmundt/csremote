@@ -1,4 +1,4 @@
-#region Header
+﻿#region Header
 
 // Copyright (C) 2012 Daniel Schubert
 //
@@ -42,22 +42,7 @@ namespace Remoting.Server
 			IpcChannel serverChannel = new IpcChannel("remote");
 			ChannelServices.RegisterChannel(serverChannel, false);
 
-			// show the name of the channel
-			Console.WriteLine("The name of the channel is {0}.",
-				serverChannel.ChannelName);
-
-			// show the priority of the channel
-			Console.WriteLine("The priority of the channel is {0}.",
-				serverChannel.ChannelPriority);
-
-			// show the URIs associated with the channel
-			ChannelDataStore channelData = (ChannelDataStore)serverChannel.ChannelData;
-			foreach (string uri in channelData.ChannelUris)
-			{
-				Console.WriteLine("The channel URI is {0}.", uri);
-			}
-
-			// expose an object for remote calls
+            // expose an object for remote calls
 			RemotingConfiguration.RegisterWellKnownServiceType(
 				refObject.GetType(), "command", WellKnownObjectMode.Singleton);
 			RemotingServices.Marshal(refObject, "command");

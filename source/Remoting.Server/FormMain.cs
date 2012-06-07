@@ -46,6 +46,12 @@ namespace Remoting.Server
 
 		#endregion Constructors
 
+		#region Delegates
+
+		delegate void SetTextCallback(string text);
+
+		#endregion Delegates
+
 		#region Methods
 
 		private void InitializeServer()
@@ -66,8 +72,21 @@ namespace Remoting.Server
 
 		private void MessageReceivedHandler(object sender, MessageReceivedEventArgs e)
 		{
-			tbLog.AppendText("MessageReceived: " + (string)e.UserObject);
-			tbLog.AppendText(Environment.NewLine);
+			SetText("MessageReceived: " + (string)e.UserObject);
+			SetText(Environment.NewLine);
+		}
+
+		private void SetText(string text)
+		{
+			if (tbLog.InvokeRequired)
+			{
+				SetTextCallback d = new SetTextCallback(SetText);
+				this.Invoke(d, new object[] { text });
+			}
+			else
+			{
+				tbLog.AppendText(text);
+			}
 		}
 
 		#endregion Methods

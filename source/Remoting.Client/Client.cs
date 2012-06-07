@@ -1,4 +1,4 @@
-﻿#region Header
+#region Header
 
 // Copyright (C) 2012 Daniel Schubert
 //
@@ -61,14 +61,14 @@ namespace Remoting.Client
 		public void SendCommand(Command command)
 		{
 			// create an instance of the remote object
-            ICommand remoteObject = (ICommand)Activator.GetObject(
-                typeof(ICommand), string.Format("ipc://remote/command"));
+			ICommand remoteObject = (ICommand)Activator.GetObject(
+				typeof(ICommand), string.Format("ipc://remote/command"));
 
-            // execute remote object asynchronously 
-            AsyncCallback remoteCallback = new AsyncCallback(RemoteCallback);
-            AsyncOperation asyncOperation = AsyncOperationManager.CreateOperation(null);
-            AsyncCommandDelegate remoteDelegate = new AsyncCommandDelegate(remoteObject.SendCommand);
-            IAsyncResult result = remoteDelegate.BeginInvoke(command, remoteCallback, asyncOperation);
+			// execute remote object asynchronously
+			AsyncCallback remoteCallback = new AsyncCallback(RemoteCallback);
+			AsyncOperation asyncOperation = AsyncOperationManager.CreateOperation(null);
+			AsyncCommandDelegate remoteDelegate = new AsyncCommandDelegate(remoteObject.SendCommand);
+			IAsyncResult result = remoteDelegate.BeginInvoke(command, remoteCallback, asyncOperation);
 		}
 
 		private void OnCommandCompleted(AsyncCompletedEventArgs e)
@@ -83,7 +83,7 @@ namespace Remoting.Client
 		{
 			try
 			{
-                // raed remote object return value asynchronously
+				// raed remote object return value asynchronously
 				AsyncCommandDelegate remoteDelegate =
 					(AsyncCommandDelegate)((AsyncResult)asyncResult).AsyncDelegate;
 				object userState = remoteDelegate.EndInvoke(asyncResult);

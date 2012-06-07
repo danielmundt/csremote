@@ -1,4 +1,4 @@
-﻿#region Header
+#region Header
 
 // Copyright (C) 2012 Daniel Schubert
 //
@@ -39,7 +39,7 @@ namespace Remoting.Server
 		public void Create(MarshalByRefObject refObject)
 		{
 			// create and register the server channel
-            IpcChannel serverChannel = new IpcChannel("remote");
+			IpcChannel serverChannel = new IpcChannel("remote");
 			ChannelServices.RegisterChannel(serverChannel, false);
 
 			// show the name of the channel

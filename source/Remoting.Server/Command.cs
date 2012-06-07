@@ -23,6 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.Remoting.Lifetime;
 using System.Text;
 using System.Threading;
 
@@ -40,10 +41,6 @@ namespace Remoting.Server
 
 		#region Constructors
 
-        public Command()
-        {
-        }
-
 		public Command(Context context)
 		{
 			this.context = context;
@@ -53,9 +50,15 @@ namespace Remoting.Server
 
 		#region Methods
 
+		public override object InitializeLifetimeService()
+		{
+			return null;
+		}
+
 		public int SendCommand(Remoting.Service.Enums.Command command)
 		{
-			context.SetLog(string.Format("Received command: {0}", command));
+			string appName = AppDomain.CurrentDomain.FriendlyName;
+			context.SetLog(string.Format("Received command: {0} ({1})", command, appName));
 			return Process.GetCurrentProcess().Id;
 		}
 

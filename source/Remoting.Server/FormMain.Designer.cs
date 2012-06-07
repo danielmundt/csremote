@@ -50,7 +50,7 @@
             this.ClientSize = new System.Drawing.Size(284, 262);
             this.Controls.Add(this.tbLog);
             this.Name = "FormMain";
-            this.Text = "Remoting Server";
+            this.Text = "Server";
             this.ResumeLayout(false);
             this.PerformLayout();
 

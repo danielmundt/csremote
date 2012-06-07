@@ -26,24 +26,20 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.Remoting;
+using System.Runtime.Remoting.Channels;
+using System.Runtime.Remoting.Channels.Ipc;
+using System.Runtime.Remoting.Lifetime;
 using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 
 using Remoting.Service;
-using Remoting.Service.Enums;
 
 namespace Remoting.Client
 {
 	public partial class FormMain : Form
 	{
-		#region Fields
-
-		private Client client;
-
-		#endregion Fields
-
 		#region Constructors
 
 		public FormMain()
@@ -56,33 +52,27 @@ namespace Remoting.Client
 
 		#region Methods
 
-		private void btnStart_Click(object sender, EventArgs e)
+		private void btnSend_Click(object sender, EventArgs e)
 		{
-			// client.SendCommand(Command.Start);
-			client.SendMessage();
-		}
-
-		private void btnStop_Click(object sender, EventArgs e)
-		{
-			// client.SendCommand(Command.Stop);
-			client.SendMessage();
-		}
-
-		private void CommandCompletedHandler(object sender, AsyncCompletedEventArgs e)
-		{
-			tbLog.AppendText(string.Format("Async result: {0}", (int)e.UserState));
-			tbLog.AppendText(Environment.NewLine);
+			SendMessage();
 		}
 
 		private void InitializeClient()
 		{
-			// client = new Client();
-			// client.CommandCompleted += new EventHandler<AsyncCompletedEventArgs>(CommandCompletedHandler);
-			// client.RegisterChannel();
+            // create and register the channel
+            IpcClientChannel clientChannel = new IpcClientChannel();
+            ChannelServices.RegisterChannel(clientChannel, false);
 
-			client = new Client();
-			client.RegisterChannel();
+            // expose object for remote calls
+            RemotingConfiguration.RegisterWellKnownClientType(
+                typeof(RemoteMessage), "ipc://remote/command");
 		}
+
+        public void SendMessage()
+        {
+            RemoteMessage remoteMessage = new RemoteMessage();
+            remoteMessage.Send("Hello World");
+        }
 
 		#endregion Methods
 	}

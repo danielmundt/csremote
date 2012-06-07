@@ -25,6 +25,9 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.Remoting;
+using System.Runtime.Remoting.Channels;
+using System.Runtime.Remoting.Channels.Ipc;
 using System.Text;
 using System.Windows.Forms;
 
@@ -44,18 +47,6 @@ namespace Remoting.Server
 
 		#endregion Constructors
 
-		#region Properties
-
-		public TextBox LogTextBox
-		{
-			get
-			{
-				return this.tbLog;
-			}
-		}
-
-		#endregion Properties
-
 		#region Methods
 
 		private void InitializeServer()
@@ -64,8 +55,14 @@ namespace Remoting.Server
 			remoteMessage.MessageReceived +=
 				new EventHandler<MessageReceivedEventArgs>(MessageReceivedHandler);
 
-			Server server = new Server();
-			server.Create(remoteMessage);
+            // create and register the server channel
+            IpcServerChannel serverChannel = new IpcServerChannel("remote");
+            ChannelServices.RegisterChannel(serverChannel, false);
+
+            // expose object for remote calls
+            RemotingConfiguration.RegisterWellKnownServiceType(
+                typeof(RemoteMessage), "command", WellKnownObjectMode.Singleton);
+            RemotingServices.Marshal(remoteMessage, "command");
 		}
 
 		private void MessageReceivedHandler(object sender, MessageReceivedEventArgs e)

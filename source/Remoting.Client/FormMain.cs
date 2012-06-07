@@ -69,8 +69,15 @@ namespace Remoting.Client
 
         public void SendMessage()
         {
-            RemoteMessage remoteMessage = new RemoteMessage();
-            remoteMessage.Send("Hello World");
+            try
+            {
+                RemoteMessage remoteMessage = new RemoteMessage();
+                remoteMessage.Send("Hello World");
+            }
+            catch (RemotingException ex)
+            {
+                MessageBox.Show(this, ex.Message, "Error");
+            }
         }
 
 		#endregion Methods

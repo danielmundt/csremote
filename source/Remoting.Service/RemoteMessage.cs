@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Remote.MessageBox
+namespace Remoting.Service
 {
 	public class RemoteMessage : MarshalByRefObject
 	{

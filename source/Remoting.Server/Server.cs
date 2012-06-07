@@ -59,7 +59,7 @@ namespace Remoting.Server
 
 			// expose an object for remote calls
 			RemotingConfiguration.RegisterWellKnownServiceType(
-				typeof(Command), "command", WellKnownObjectMode.Singleton);
+				refObject.GetType(), "command", WellKnownObjectMode.Singleton);
 			RemotingServices.Marshal(refObject, "command");
 		}
 

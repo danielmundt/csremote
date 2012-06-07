@@ -1,4 +1,4 @@
-#region Header
+﻿#region Header
 
 // Copyright (C) 2012 Daniel Schubert
 //
@@ -56,6 +56,12 @@ namespace Remoting.Client
 			// create and register the channel
 			IpcClientChannel clientChannel = new IpcClientChannel();
 			ChannelServices.RegisterChannel(clientChannel, false);
+
+			RemotingConfiguration.RegisterWellKnownClientType(
+				typeof(RemoteMessage), "ipc://remote/command");
+
+			// RemoteMessage remoteMessage = new RemoteMessage();
+			// remoteMessage.Send("Hello World");
 		}
 
 		public void SendCommand(Command command)
@@ -69,6 +75,12 @@ namespace Remoting.Client
 			AsyncOperation asyncOperation = AsyncOperationManager.CreateOperation(null);
 			AsyncCommandDelegate remoteDelegate = new AsyncCommandDelegate(remoteObject.SendCommand);
 			IAsyncResult result = remoteDelegate.BeginInvoke(command, remoteCallback, asyncOperation);
+		}
+
+		public void SendMessage()
+		{
+			RemoteMessage remoteMessage = new RemoteMessage();
+			remoteMessage.Send("Hello World");
 		}
 
 		private void OnCommandCompleted(AsyncCompletedEventArgs e)

@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Remote.MessageBox
+namespace Remoting.Service
 {
 	public class MessageReceivedEventArgs : EventArgs
 	{
@@ -24,7 +24,7 @@ namespace Remote.MessageBox
 
 		#region Properties
 
-		public object UserState
+		public object UserObject
 		{
 			get
 			{

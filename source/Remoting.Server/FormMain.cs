@@ -28,6 +28,8 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
+using Remoting.Service;
+
 namespace Remoting.Server
 {
 	public partial class FormMain : Form
@@ -58,11 +60,18 @@ namespace Remoting.Server
 
 		private void InitializeServer()
 		{
-			Context context = new Context(this);
-			Command command = new Command(context);
+            RemoteMessage remoteMessage = new RemoteMessage();
+			remoteMessage.MessageReceived +=
+				new EventHandler<MessageReceivedEventArgs>(MessageReceivedHandler);
 
 			Server server = new Server();
-			server.Create(command);
+			server.Create(remoteMessage);
+		}
+
+		private void MessageReceivedHandler(object sender, MessageReceivedEventArgs e)
+		{
+			tbLog.AppendText("MessageReceived");
+			tbLog.AppendText(Environment.NewLine);
 		}
 
 		#endregion Methods

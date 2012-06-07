@@ -58,12 +58,14 @@ namespace Remoting.Client
 
 		private void btnStart_Click(object sender, EventArgs e)
 		{
-			client.SendCommand(Command.Start);
+			// client.SendCommand(Command.Start);
+			client.SendMessage();
 		}
 
 		private void btnStop_Click(object sender, EventArgs e)
 		{
-			client.SendCommand(Command.Stop);
+			// client.SendCommand(Command.Stop);
+			client.SendMessage();
 		}
 
 		private void CommandCompletedHandler(object sender, AsyncCompletedEventArgs e)
@@ -74,8 +76,11 @@ namespace Remoting.Client
 
 		private void InitializeClient()
 		{
+			// client = new Client();
+			// client.CommandCompleted += new EventHandler<AsyncCompletedEventArgs>(CommandCompletedHandler);
+			// client.RegisterChannel();
+
 			client = new Client();
-			client.CommandCompleted += new EventHandler<AsyncCompletedEventArgs>(CommandCompletedHandler);
 			client.RegisterChannel();
 		}
 

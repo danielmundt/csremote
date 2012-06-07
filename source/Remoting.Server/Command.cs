@@ -52,6 +52,7 @@ namespace Remoting.Server
 
 		public override object InitializeLifetimeService()
 		{
+			// indicate that this lease never expires
 			return null;
 		}
 

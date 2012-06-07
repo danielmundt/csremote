@@ -70,7 +70,7 @@ namespace Remoting.Server
 
 		private void MessageReceivedHandler(object sender, MessageReceivedEventArgs e)
 		{
-			tbLog.AppendText("MessageReceived");
+			tbLog.AppendText("MessageReceived: " + (string)e.UserObject);
 			tbLog.AppendText(Environment.NewLine);
 		}
 

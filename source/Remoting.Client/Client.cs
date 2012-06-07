@@ -59,9 +59,6 @@ namespace Remoting.Client
 
 			RemotingConfiguration.RegisterWellKnownClientType(
 				typeof(RemoteMessage), "ipc://remote/command");
-
-			// RemoteMessage remoteMessage = new RemoteMessage();
-			// remoteMessage.Send("Hello World");
 		}
 
 		public void SendCommand(Command command)

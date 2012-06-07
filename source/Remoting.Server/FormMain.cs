@@ -58,7 +58,7 @@ namespace Remoting.Server
 
 		private void InitializeServer()
 		{
-	        Context context = new Context(this);
+			Context context = new Context(this);
 			Command command = new Command(context);
 
 			Server server = new Server();

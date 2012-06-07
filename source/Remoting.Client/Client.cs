@@ -1,4 +1,4 @@
-﻿#region Header
+#region Header
 
 // Copyright (C) 2012 Daniel Schubert
 //
@@ -26,6 +26,7 @@ using System.Linq;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Ipc;
+using System.Runtime.Remoting.Lifetime;
 using System.Runtime.Remoting.Messaging;
 using System.Text;
 
@@ -36,8 +37,6 @@ namespace Remoting.Client
 {
 	class Client
 	{
-        private ICommand remoteObject;
-
 		#region Delegates
 
 		public delegate int AsyncCommandDelegate(Command command);
@@ -54,28 +53,30 @@ namespace Remoting.Client
 
 		public void RegisterChannel()
 		{
-            // create and register the channel
-            IpcClientChannel clientChannel = new IpcClientChannel();
-            ChannelServices.RegisterChannel(clientChannel, false);
-
-            // create an instance of the remote object
-            remoteObject = (ICommand)Activator.GetObject(typeof(ICommand),
-                "ipc://remote/command");
-        }
-
-        /*public void SendCommand(Command command)
-        {
-            if (remoteObject != null)
-            {
-                int result = remoteObject.SendCommand(command);
-                Console.WriteLine("Result: {0}", result);
-
-                OnCommandCompleted(new AsyncCompletedEventArgs(null, false, result));
-            }
-        }*/
+			// create and register the channel
+			IpcClientChannel clientChannel = new IpcClientChannel();
+			ChannelServices.RegisterChannel(clientChannel, false);
+		}
 
 		public void SendCommand(Command command)
 		{
+			// create an instance of the remote object
+			ICommand remoteObject = (ICommand)Activator.GetObject(
+				typeof(ICommand), "ipc://remote/command");
+			if (remoteObject != null)
+			{
+				int result = remoteObject.SendCommand(command);
+				Console.WriteLine("Result: {0}", result);
+
+				OnCommandCompleted(new AsyncCompletedEventArgs(null, false, result));
+			}
+		}
+
+		public void SendCommand_OLD(Command command)
+		{
+			// create an instance of the remote object
+			ICommand remoteObject = (ICommand)Activator.GetObject(
+				typeof(ICommand), "ipc://remote/command");
 			if (remoteObject != null)
 			{
 				AsyncCallback remoteCallback = new AsyncCallback(RemoteCallback);

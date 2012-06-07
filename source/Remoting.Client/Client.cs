@@ -58,20 +58,6 @@ namespace Remoting.Client
 			ChannelServices.RegisterChannel(clientChannel, false);
 		}
 
-		/* public void SendCommand(Command command)
-		{
-			// create an instance of the remote object
-			ICommand remoteObject = (ICommand)Activator.GetObject(
-                typeof(ICommand), "ipc://remote/command");
-			if (remoteObject != null)
-			{
-				int result = remoteObject.SendCommand(command);
-				Console.WriteLine("Result: {0}", result);
-
-				OnCommandCompleted(new AsyncCompletedEventArgs(null, false, result));
-			}
-		} */
-
 		public void SendCommand(Command command)
 		{
 			// create an instance of the remote object

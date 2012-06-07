@@ -40,6 +40,10 @@ namespace Remoting.Server
 
 		#region Constructors
 
+        public Command()
+        {
+        }
+
 		public Command(Context context)
 		{
 			this.context = context;

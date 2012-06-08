@@ -111,7 +111,8 @@ namespace Remoting.Service
 
 		public void Send(string clientId, Object obj)
 		{
-			OnMessageReceived(new MessageReceivedEventArgs(clientId, obj));
+            HostToClient("Hello World");
+			// OnMessageReceived(new MessageReceivedEventArgs(clientId, obj));
 		}
 
 		private void OnMessageReceived(MessageReceivedEventArgs e)

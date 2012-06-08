@@ -58,10 +58,11 @@ namespace Remoting.Server
 
 		private void InitializeServer()
 		{
-			Service remoteMessage = new Service();
+			RemoteMessage remoteMessage = new RemoteMessage();
 			remoteMessage.MessageReceived +=
 				new EventHandler<MessageReceivedEventArgs>(remoteMessage_MessageReceived);
-
+            remoteMessage.ClientAdded +=
+                new EventHandler<ClientAddedEventArgs>(remoteMessage_ClientAdded);
 			// create custom formatter
 			BinaryServerFormatterSinkProvider provider = new BinaryServerFormatterSinkProvider();
 			provider.TypeFilterLevel = TypeFilterLevel.Full;
@@ -78,7 +79,7 @@ namespace Remoting.Server
 
 			// expose object for remote calls
 			RemotingConfiguration.RegisterWellKnownServiceType(
-				typeof(Service), "service", WellKnownObjectMode.Singleton);
+				typeof(RemoteMessage), "service", WellKnownObjectMode.Singleton);
             RemotingServices.Marshal(remoteMessage, "service");
 		}
 
@@ -87,6 +88,16 @@ namespace Remoting.Server
 			SetText(string.Format("Message: ID: {0}, Payload: \"{1}\"", e.ClientId, (string)e.UserObject));
 			SetText(Environment.NewLine);
 		}
+
+        private void remoteMessage_ClientAdded(object sender, ClientAddedEventArgs e)
+        {
+            SetText(string.Format("Client added: ID: {0}", e.ClientId));
+            SetText(Environment.NewLine);
+
+            // echo message
+            RemoteMessage remoteMessage = (RemoteMessage)sender;
+            remoteMessage.PushEvent(e.ClientId, null);
+        }
 
 		private void SetText(string text)
 		{

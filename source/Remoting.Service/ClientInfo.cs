@@ -28,36 +28,14 @@ namespace Remoting.Service
 	[Serializable]
 	public class ClientInfo
 	{
-		#region Fields
-
 		private string clientId;
-		private delCommsInfo hostToClient;
+        private MessageArrivedEvent arrivedEvent;
 
-		#endregion Fields
-
-		#region Constructors
-
-		public ClientInfo(string clientId, delCommsInfo hostToClient)
+		public ClientInfo(string clientId, MessageArrivedEvent arrivedEvent)
 		{
 			this.clientId = clientId;
-			this.hostToClient = hostToClient;
+            this.arrivedEvent = arrivedEvent;
 		}
-
-		#endregion Constructors
-
-		#region Delegates
-
-		public delegate void ClientInfoCallback(object o);
-
-		#endregion Delegates
-
-		#region Events
-
-		public event EventHandler<MessageReceivedEventArgs> MessageReceived;
-
-		#endregion Events
-
-		#region Properties
 
 		public string ClientId
 		{
@@ -67,16 +45,12 @@ namespace Remoting.Service
 			}
 		}
 
-		public delCommsInfo HostToClient
+        public MessageArrivedEvent ArrivedEvent
 		{
-			get { return hostToClient; }
+            get { return arrivedEvent; }
 		}
 
-		#endregion Properties
-
-		#region Methods
-
-		/* public override bool Equals(Object obj)
+		public override bool Equals(Object obj)
 		{
 			if (obj == null)
 			{
@@ -90,8 +64,9 @@ namespace Remoting.Service
 			}
 
 			return (clientId == other.ClientId);
-		} */
-		/* public bool Equals(ClientInfo other)
+		}
+
+		public bool Equals(ClientInfo other)
 		{
 			// If parameter is null return false:
 			if ((object)other == null)
@@ -101,25 +76,11 @@ namespace Remoting.Service
 
 			// Return true if the fields match:
 			return (clientId == other.ClientId);
-		} */
-		/* public override int GetHashCode()
+		}
+
+		public override int GetHashCode()
 		{
 			return clientId.GetHashCode();
-		} */
-		public void Send(string clientId, Object obj)
-		{
-			HostToClient("Hello World");
-			// OnMessageReceived(new MessageReceivedEventArgs(clientId, obj));
 		}
-
-		private void OnMessageReceived(MessageReceivedEventArgs e)
-		{
-			if (MessageReceived != null)
-			{
-				MessageReceived(this, e);
-			}
-		}
-
-		#endregion Methods
 	}
 }

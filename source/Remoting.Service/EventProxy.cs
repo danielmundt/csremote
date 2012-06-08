@@ -23,9 +23,26 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Remoting.Interface
+namespace Remoting.Service
 {
-	public class EventProxy
-	{
-	}
+    public delegate void MessageArrivedEvent(Object obj);
+
+    public class EventProxy : MarshalByRefObject
+    {
+        public event MessageArrivedEvent MessageArrived;
+
+        public override object InitializeLifetimeService()
+        {
+            // indicate that this lease never expires
+            return null;
+        }
+
+        public void OnMessageArrived(Object obj)
+        {
+            if (MessageArrived != null)
+            {
+                MessageArrived(obj);
+            }
+        }
+    }
 }

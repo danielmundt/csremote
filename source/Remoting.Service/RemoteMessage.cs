@@ -27,21 +27,10 @@ namespace Remoting.Service
 {
 	public class RemoteMessage : MarshalByRefObject
 	{
-		#region Fields
-
 		private List<ClientInfo> clients = new List<ClientInfo>();
-
-		#endregion Fields
-
-		#region Events
-
-		public event EventHandler<ClientAddedEventArgs> ClientAdded;
-
-		public event EventHandler<MessageReceivedEventArgs> MessageReceived;
-
-		#endregion Events
-
-		#region Methods
+        public delegate void ClientAddedEvent(string clientId, Object obj);
+        public event ClientAddedEvent ClientAdded;
+        public event MessageArrivedEvent MessageArrived;
 
 		public override object InitializeLifetimeService()
 		{
@@ -50,49 +39,48 @@ namespace Remoting.Service
 		}
 
 		// called from service server to send client an event
-		public void PushEvent(string clientId, Object obj)
+		/* public void PushEvent(string clientId, Object obj)
 		{
 			foreach (ClientInfo clientInfo in clients)
 			{
 				if (clientInfo.ClientId == clientId)
 				{
-					clientInfo.Send(clientId, obj);
+					// clientInfo.Send(clientId, obj);
 				}
 			}
-		}
+		} */
 
-		// called from service client to send a messsage
-		public void PushMessage(string clientId, Object obj)
+		// called from client to publish a messsage
+        public void PublishMessage(string clientId, Object obj)
 		{
-			OnMessageReceived(new MessageReceivedEventArgs(clientId, obj));
+            ClientInfo item = new ClientInfo(clientId, null);
+            if (!clients.Contains(item))
+            {
+                clients.Add(item);
+                OnClientAdded(clientId, obj);
+            }
+            OnMessageArrived(obj);
 		}
 
-		public void Register(string clientId, delCommsInfo htc)
-		{
-			ClientInfo item = new ClientInfo(clientId, htc);
-			if (!clients.Contains(item))
-			{
-				clients.Add(item);
-				OnClientAdded(new ClientAddedEventArgs(clientId));
-			}
-		}
-
-		private void OnClientAdded(ClientAddedEventArgs e)
+		private void OnClientAdded(string clientId, Object obj)
 		{
 			if (ClientAdded != null)
 			{
-				ClientAdded(this, e);
+				ClientAdded(clientId, obj);
 			}
 		}
 
-		private void OnMessageReceived(MessageReceivedEventArgs e)
-		{
-			if (MessageReceived != null)
-			{
-				MessageReceived(this, e);
-			}
-		}
-
-		#endregion Methods
+        private void OnMessageArrived(Object obj)
+        {
+            if (MessageArrived != null)
+            {
+                Delegate[] delegates = MessageArrived.GetInvocationList();
+                foreach (Delegate d in delegates)
+                {
+                    MessageArrivedEvent listener = (MessageArrivedEvent)d;
+                    listener.Invoke(obj);
+                }
+            }
+        }
 	}
 }

@@ -27,7 +27,7 @@ using System.Data;
 using System.Drawing;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
-using System.Runtime.Remoting.Channels.Ipc;
+using System.Runtime.Remoting.Channels.Tcp;
 using System.Runtime.Remoting.Lifetime;
 using System.Runtime.Remoting.Messaging;
 using System.Runtime.Serialization.Formatters;
@@ -41,69 +41,33 @@ namespace Remoting.Client
 {
 	public partial class FormMain : Form
 	{
-		#region Fields
-
-		private RemoteMessage remoteMessage;
-		private CallbackSink _CallbackSink = null;
-
-		#endregion Fields
-
-		#region Constructors
-
 		public FormMain()
 		{
 			InitializeComponent();
 			InitializeClient();
 		}
 
-		#endregion Constructors
-
-		#region Delegates
-
 		delegate void SetTextCallback(string text);
 
-		#endregion Delegates
-
-		#region Methods
-
-		public void SendMessage()
+		public void SendMessage(string message)
 		{
 			try
 			{
-				if (remoteMessage != null)
-				{
-					remoteMessage.PushMessage(tbClientId.Text, "Hello World");
-				}
-			}
+                // create transparent proxy to server component
+                RemoteMessage remoteMessage = (RemoteMessage)Activator.GetObject(
+                    typeof(RemoteMessage), "tcp://localhost:9001/serverExample.Rem");
+                remoteMessage.PublishMessage(message, "Hello World");
+                remoteMessage.MessageArrived += new MessageArrivedEvent(eventProxy.OnMessageArrived);
+            }
 			catch (RemotingException ex)
 			{
 				MessageBox.Show(this, ex.Message, "Error");
 			}
 		}
 
-		private void btnRegister_Click(object sender, EventArgs e)
-		{
-			// register client
-			// remoteMessage = new RemoteMessage();
-			//remoteMessage.MessageReceived +=
-			//    new EventHandler<MessageReceivedEventArgs>(remoteMessage_MessageReceived);
-			if (remoteMessage != null)
-			{
-				// remoteMessage.MessageReceived +=
-				//    new EventHandler<MessageReceivedEventArgs>(remoteMessage_MessageReceived);
-				remoteMessage.Register(tbClientId.Text,
-					new delCommsInfo(_CallbackSink.HandleToClient));
-			}
-		}
-
 		private void btnSend_Click(object sender, EventArgs e)
 		{
-			SendMessage();
-		}
-
-		void CallbackSink_OnHostToClient(Object obj)
-		{
-			int i = 0;
+            SendMessage(tbClientId.Text);
 		}
 
 		private void FormMain_Load(object sender, EventArgs e)
@@ -111,27 +75,39 @@ namespace Remoting.Client
 			tbClientId.Text = Guid.NewGuid().ToString("N");
 		}
 
+        private EventProxy eventProxy;
+
 		private void InitializeClient()
 		{
-			_CallbackSink = new CallbackSink();
-			_CallbackSink.OnHostToClient += new delCommsInfo(CallbackSink_OnHostToClient);
+            BinaryClientFormatterSinkProvider clientProvider = new BinaryClientFormatterSinkProvider();
+            BinaryServerFormatterSinkProvider serverProvider = new BinaryServerFormatterSinkProvider();
+            serverProvider.TypeFilterLevel = TypeFilterLevel.Full;
+
+            IDictionary props = new Hashtable();
+            props["name"] = "remotingClient";
+            props["port"] = 0;
 
 			// create and register the channel
-			IpcClientChannel clientChannel = new IpcClientChannel();
-			ChannelServices.RegisterChannel(clientChannel, false);
+            TcpChannel clientChannel = new TcpChannel(props, clientProvider, serverProvider);
+            ChannelServices.RegisterChannel(clientChannel, false);
 
-			// create transparent proxy to server component
-			remoteMessage = (RemoteMessage)Activator.GetObject(
-				typeof(RemoteMessage), "ipc://remote/service");
+            RemotingConfiguration.RegisterWellKnownClientType(
+                new WellKnownClientTypeEntry(typeof(RemoteMessage),
+                    "tcp://localhost:9000/serverExample.Rem"));
+
+            // create event proxy
+            eventProxy = new EventProxy();
+            eventProxy.MessageArrived += new MessageArrivedEvent(eventProxy_MessageArrived);
 		}
 
-		private void remoteMessage_MessageReceived(object sender, MessageReceivedEventArgs e)
-		{
-			SetText("MessageReceived: " + (string)e.UserObject);
-			SetText(Environment.NewLine);
-		}
+        void eventProxy_MessageArrived(object obj)
+        {
+            // SetText("MessageReceived: " + (string)obj);
+            SetText("MessageReceived");
+            SetText(Environment.NewLine);
+        }
 
-		private void SetText(string text)
+    	private void SetText(string text)
 		{
 			// thread-safe call
 			if (tbLog.InvokeRequired)
@@ -144,7 +120,5 @@ namespace Remoting.Client
 				tbLog.AppendText(text);
 			}
 		}
-
-		#endregion Methods
 	}
 }

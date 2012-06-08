@@ -27,7 +27,7 @@ using System.Data;
 using System.Drawing;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
-using System.Runtime.Remoting.Channels.Ipc;
+using System.Runtime.Remoting.Channels.Tcp;
 using System.Runtime.Serialization.Formatters;
 using System.Text;
 using System.Windows.Forms;
@@ -59,45 +59,41 @@ namespace Remoting.Server
 		private void InitializeServer()
 		{
 			RemoteMessage remoteMessage = new RemoteMessage();
-			remoteMessage.MessageReceived +=
-				new EventHandler<MessageReceivedEventArgs>(remoteMessage_MessageReceived);
-			remoteMessage.ClientAdded +=
-				new EventHandler<ClientAddedEventArgs>(remoteMessage_ClientAdded);
+            remoteMessage.ClientAdded += new RemoteMessage.ClientAddedEvent(remoteMessage_ClientAdded);
+            remoteMessage.MessageArrived += new MessageArrivedEvent(remoteMessage_MessageArrived);
+
+            // set channel properties
+            IDictionary props = new Hashtable();
+            props["port"] = 9001;
+            props["name"] = "serverExample.Rem";
+
 			// create custom formatter
 			BinaryServerFormatterSinkProvider provider = new BinaryServerFormatterSinkProvider();
 			provider.TypeFilterLevel = TypeFilterLevel.Full;
 
-			// set chaqnnel properties
-			IDictionary props = new Hashtable();
-			// props["name"] = "ipc server";
-			props["portName"] = "remote";
-
 			// create and register the server channel
-			//IpcServerChannel serverChannel = new IpcServerChannel("remote");
-			IpcServerChannel serverChannel = new IpcServerChannel(props, provider);
+            TcpServerChannel serverChannel = new TcpServerChannel(props, provider);
 			ChannelServices.RegisterChannel(serverChannel, false);
 
 			// expose object for remote calls
-			RemotingConfiguration.RegisterWellKnownServiceType(
-				typeof(RemoteMessage), "service", WellKnownObjectMode.Singleton);
-			RemotingServices.Marshal(remoteMessage, "service");
+			//RemotingConfiguration.RegisterWellKnownServiceType(
+            //    typeof(RemoteMessage), "serverExample.Rem", WellKnownObjectMode.Singleton);
+
+            // publish a specific object instance
+            RemotingServices.Marshal(remoteMessage, "serverExample.Rem");
 		}
 
-		private void remoteMessage_ClientAdded(object sender, ClientAddedEventArgs e)
-		{
-			SetText(string.Format("Client added: ID: {0}", e.ClientId));
-			SetText(Environment.NewLine);
+        void remoteMessage_ClientAdded(string clientId, object obj)
+        {
+            SetText(string.Format("Client ID registered: {0}", clientId));
+            SetText(Environment.NewLine);
+        }
 
-			// echo message
-			RemoteMessage remoteMessage = (RemoteMessage)sender;
-			remoteMessage.PushEvent(e.ClientId, null);
-		}
-
-		private void remoteMessage_MessageReceived(object sender, MessageReceivedEventArgs e)
-		{
-			SetText(string.Format("Message: ID: {0}, Payload: \"{1}\"", e.ClientId, (string)e.UserObject));
-			SetText(Environment.NewLine);
-		}
+        void remoteMessage_MessageArrived(object obj)
+        {
+            SetText(string.Format("Message arrived: {0}", obj));
+            SetText(Environment.NewLine);
+        }
 
 		private void SetText(string text)
 		{

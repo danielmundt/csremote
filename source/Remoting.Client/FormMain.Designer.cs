@@ -32,12 +32,11 @@
             this.tbLog = new System.Windows.Forms.TextBox();
             this.tbClientId = new System.Windows.Forms.TextBox();
             this.lblId = new System.Windows.Forms.Label();
-            this.btnRegister = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnSend
             // 
-            this.btnSend.Location = new System.Drawing.Point(12, 43);
+            this.btnSend.Location = new System.Drawing.Point(12, 12);
             this.btnSend.Name = "btnSend";
             this.btnSend.Size = new System.Drawing.Size(75, 23);
             this.btnSend.TabIndex = 0;
@@ -50,11 +49,11 @@
             this.tbLog.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbLog.Location = new System.Drawing.Point(12, 72);
+            this.tbLog.Location = new System.Drawing.Point(12, 41);
             this.tbLog.Multiline = true;
             this.tbLog.Name = "tbLog";
             this.tbLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.tbLog.Size = new System.Drawing.Size(460, 178);
+            this.tbLog.Size = new System.Drawing.Size(460, 209);
             this.tbLog.TabIndex = 2;
             // 
             // tbClientId
@@ -75,22 +74,11 @@
             this.lblId.TabIndex = 4;
             this.lblId.Text = "ID";
             // 
-            // btnRegister
-            // 
-            this.btnRegister.Location = new System.Drawing.Point(12, 11);
-            this.btnRegister.Name = "btnRegister";
-            this.btnRegister.Size = new System.Drawing.Size(75, 23);
-            this.btnRegister.TabIndex = 5;
-            this.btnRegister.Text = "&Register";
-            this.btnRegister.UseVisualStyleBackColor = true;
-            this.btnRegister.Click += new System.EventHandler(this.btnRegister_Click);
-            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(484, 262);
-            this.Controls.Add(this.btnRegister);
             this.Controls.Add(this.lblId);
             this.Controls.Add(this.tbClientId);
             this.Controls.Add(this.tbLog);
@@ -109,7 +97,6 @@
         private System.Windows.Forms.TextBox tbLog;
         private System.Windows.Forms.TextBox tbClientId;
         private System.Windows.Forms.Label lblId;
-        private System.Windows.Forms.Button btnRegister;
     }
 }
 

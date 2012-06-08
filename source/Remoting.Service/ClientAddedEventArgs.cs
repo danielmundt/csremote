@@ -25,21 +25,19 @@ using System.Text;
 
 namespace Remoting.Service
 {
-	public class MessageReceivedEventArgs : EventArgs
+	public class ClientAddedEventArgs : EventArgs
 	{
 		#region Fields
 
 		private string clientId;
-		private Object userObject;
 
 		#endregion Fields
 
 		#region Constructors
 
-		public MessageReceivedEventArgs(string clientId, Object userObject)
+		public ClientAddedEventArgs(string clientId)
 		{
 			this.clientId = clientId;
-			this.userObject = userObject;
 		}
 
 		#endregion Constructors
@@ -51,14 +49,6 @@ namespace Remoting.Service
 			get
 			{
 				return clientId;
-			}
-		}
-
-		public Object UserObject
-		{
-			get
-			{
-				return userObject;
 			}
 		}
 

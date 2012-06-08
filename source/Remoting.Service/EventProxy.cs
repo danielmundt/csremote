@@ -1,4 +1,4 @@
-#region Header
+﻿#region Header
 
 // Copyright (C) 2012 Daniel Schubert
 //
@@ -23,45 +23,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Remoting.Service
+namespace Remoting.Interface
 {
-	public class MessageReceivedEventArgs : EventArgs
-	{
-		#region Fields
-
-		private string clientId;
-		private Object userObject;
-
-		#endregion Fields
-
-		#region Constructors
-
-		public MessageReceivedEventArgs(string clientId, Object userObject)
-		{
-			this.clientId = clientId;
-			this.userObject = userObject;
-		}
-
-		#endregion Constructors
-
-		#region Properties
-
-		public string ClientId
-		{
-			get
-			{
-				return clientId;
-			}
-		}
-
-		public Object UserObject
-		{
-			get
-			{
-				return userObject;
-			}
-		}
-
-		#endregion Properties
-	}
+    public class EventProxy
+    {
+    }
 }

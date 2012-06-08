@@ -1,4 +1,4 @@
-#region Header
+﻿#region Header
 
 // Copyright (C) 2012 Daniel Schubert
 //
@@ -25,24 +25,37 @@ using System.Text;
 
 namespace Remoting.Service
 {
-	public class MessageReceivedEventArgs : EventArgs
+	[Serializable]
+	public class ClientInfo
 	{
 		#region Fields
 
 		private string clientId;
-		private Object userObject;
+        private delCommsInfo hostToClient;
 
 		#endregion Fields
 
 		#region Constructors
 
-		public MessageReceivedEventArgs(string clientId, Object userObject)
+        public ClientInfo(string clientId, delCommsInfo hostToClient)
 		{
 			this.clientId = clientId;
-			this.userObject = userObject;
+            this.hostToClient = hostToClient;
 		}
 
 		#endregion Constructors
+
+		#region Delegates
+
+		public delegate void ClientInfoCallback(object o);
+
+		#endregion Delegates
+
+		#region Events
+
+		public event EventHandler<MessageReceivedEventArgs> MessageReceived;
+
+		#endregion Events
 
 		#region Properties
 
@@ -54,14 +67,61 @@ namespace Remoting.Service
 			}
 		}
 
-		public Object UserObject
+        public delCommsInfo HostToClient
+        {
+            get { return hostToClient; }
+        }
+
+		#endregion Properties
+
+		#region Methods
+
+		/* public override bool Equals(Object obj)
 		{
-			get
+			if (obj == null)
 			{
-				return userObject;
+				return false;
+			}
+
+			ClientInfo other = obj as ClientInfo;
+			if ((Object)other == null)
+			{
+				return false;
+			}
+
+			return (clientId == other.ClientId);
+		} */
+
+		/* public bool Equals(ClientInfo other)
+		{
+			// If parameter is null return false:
+			if ((object)other == null)
+			{
+				return false;
+			}
+
+			// Return true if the fields match:
+			return (clientId == other.ClientId);
+		} */
+
+		/* public override int GetHashCode()
+		{
+	    	return clientId.GetHashCode();
+		} */
+
+		public void Send(string clientId, Object obj)
+		{
+			OnMessageReceived(new MessageReceivedEventArgs(clientId, obj));
+		}
+
+		private void OnMessageReceived(MessageReceivedEventArgs e)
+		{
+			if (MessageReceived != null)
+			{
+				MessageReceived(this, e);
 			}
 		}
 
-		#endregion Properties
+		#endregion Methods
 	}
 }

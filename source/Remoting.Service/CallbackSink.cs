@@ -1,4 +1,4 @@
-#region Header
+﻿#region Header
 
 // Copyright (C) 2012 Daniel Schubert
 //
@@ -25,43 +25,38 @@ using System.Text;
 
 namespace Remoting.Service
 {
-	public class MessageReceivedEventArgs : EventArgs
+	#region Delegates
+
+	public delegate void delCommsInfo(Object obj);
+
+	#endregion Delegates
+
+	public class CallbackSink : MarshalByRefObject
 	{
-		#region Fields
-
-		private string clientId;
-		private Object userObject;
-
-		#endregion Fields
-
 		#region Constructors
 
-		public MessageReceivedEventArgs(string clientId, Object userObject)
+		public CallbackSink()
 		{
-			this.clientId = clientId;
-			this.userObject = userObject;
 		}
 
 		#endregion Constructors
 
-		#region Properties
+		#region Events
 
-		public string ClientId
+		public event delCommsInfo OnHostToClient;
+
+		#endregion Events
+
+		#region Methods
+
+		public void HandleToClient(Object obj)
 		{
-			get
+			if (OnHostToClient != null)
 			{
-				return clientId;
+				OnHostToClient(obj);
 			}
 		}
 
-		public Object UserObject
-		{
-			get
-			{
-				return userObject;
-			}
-		}
-
-		#endregion Properties
+		#endregion Methods
 	}
 }

@@ -27,8 +27,15 @@ namespace Remoting.Service
 {
 	public class RemoteMessage : MarshalByRefObject
 	{
+		#region Fields
+
+		private List<ClientInfo> clients = new List<ClientInfo>();
+
+		#endregion Fields
+
 		#region Events
 
+		public event EventHandler<ClientAddedEventArgs> ClientAdded;
 		public event EventHandler<MessageReceivedEventArgs> MessageReceived;
 
 		#endregion Events
@@ -41,9 +48,40 @@ namespace Remoting.Service
 			return null;
 		}
 
-		public void Send(object o)
+		public void Register(string clientId, delCommsInfo htc)
 		{
-			OnMessageReceived(new MessageReceivedEventArgs(o));
+			ClientInfo item = new ClientInfo(clientId, htc);
+			if (!clients.Contains(item))
+			{
+				clients.Add(item);
+				OnClientAdded(new ClientAddedEventArgs(clientId));
+			}
+		}
+
+        // called from service client to send a messsage
+		public void PushMessage(string clientId, Object obj)
+		{
+			OnMessageReceived(new MessageReceivedEventArgs(clientId, obj));
+		}
+
+        // called from service server to send client an event
+		public void PushEvent(string clientId, Object obj)
+		{
+			foreach (ClientInfo clientInfo in clients)
+			{
+				if (clientInfo.ClientId == clientId)
+				{
+					clientInfo.Send(clientId, obj);
+				}
+			}
+		}
+
+		private void OnClientAdded(ClientAddedEventArgs e)
+		{
+			if (ClientAdded != null)
+			{
+				ClientAdded(this, e);
+			}
 		}
 
 		private void OnMessageReceived(MessageReceivedEventArgs e)

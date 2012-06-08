@@ -20,6 +20,7 @@
 #endregion Header
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -29,6 +30,7 @@ using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Ipc;
 using System.Runtime.Remoting.Lifetime;
 using System.Runtime.Remoting.Messaging;
+using System.Runtime.Serialization.Formatters;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
@@ -39,6 +41,12 @@ namespace Remoting.Client
 {
 	public partial class FormMain : Form
 	{
+		#region Fields
+
+		private Service remoteMessage;
+
+		#endregion Fields
+
 		#region Constructors
 
 		public FormMain()
@@ -49,18 +57,41 @@ namespace Remoting.Client
 
 		#endregion Constructors
 
+		#region Delegates
+
+		delegate void SetTextCallback(string text);
+
+		#endregion Delegates
+
 		#region Methods
 
 		public void SendMessage()
 		{
 			try
 			{
-				RemoteMessage remoteMessage = new RemoteMessage();
-				remoteMessage.Send("Hello World");
+				if (remoteMessage != null)
+				{
+					remoteMessage.PushMessage(tbClientId.Text, "Hello World");
+				}
 			}
 			catch (RemotingException ex)
 			{
 				MessageBox.Show(this, ex.Message, "Error");
+			}
+		}
+
+		private void btnRegister_Click(object sender, EventArgs e)
+		{
+			// register client
+			// remoteMessage = new RemoteMessage();
+			//remoteMessage.MessageReceived +=
+			//    new EventHandler<MessageReceivedEventArgs>(remoteMessage_MessageReceived);
+			if (remoteMessage != null)
+			{
+				// remoteMessage.MessageReceived +=
+				//    new EventHandler<MessageReceivedEventArgs>(remoteMessage_MessageReceived);
+                remoteMessage.Register(tbClientId.Text,
+                    new delCommsInfo(_CallbackSink.HandleToClient));
 			}
 		}
 
@@ -69,15 +100,49 @@ namespace Remoting.Client
 			SendMessage();
 		}
 
+		private void FormMain_Load(object sender, EventArgs e)
+		{
+			tbClientId.Text = Guid.NewGuid().ToString("N");
+		}
+
+        private CallbackSink _CallbackSink = null;
+        void CallbackSink_OnHostToClient(Object obj)
+        {
+            int i = 0;
+        }
+
 		private void InitializeClient()
 		{
+            _CallbackSink = new CallbackSink();
+            _CallbackSink.OnHostToClient += new delCommsInfo(CallbackSink_OnHostToClient);
+
 			// create and register the channel
 			IpcClientChannel clientChannel = new IpcClientChannel();
 			ChannelServices.RegisterChannel(clientChannel, false);
 
-			// expose object for remote calls
-			RemotingConfiguration.RegisterWellKnownClientType(
-				typeof(RemoteMessage), "ipc://remote/message");
+			// create transparent proxy to server component
+			remoteMessage = (Service)Activator.GetObject(
+				typeof(Service), "ipc://remote/service");
+		}
+
+		private void remoteMessage_MessageReceived(object sender, MessageReceivedEventArgs e)
+		{
+			SetText("MessageReceived: " + (string)e.UserObject);
+			SetText(Environment.NewLine);
+		}
+
+		private void SetText(string text)
+		{
+			// thread-safe call
+			if (tbLog.InvokeRequired)
+			{
+				SetTextCallback d = new SetTextCallback(SetText);
+				this.Invoke(d, new object[] { text });
+			}
+			else
+			{
+				tbLog.AppendText(text);
+			}
 		}
 
 		#endregion Methods

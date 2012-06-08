@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Remoting.Interface</RootNamespace>
-    <AssemblyName>Remoting.Interface</AssemblyName>
+    <AssemblyName>Remoting.Service</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkSubset>
@@ -38,6 +38,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CallbackSink.cs" />
+    <Compile Include="ClientInfo.cs" />
+    <Compile Include="ClientAddedEventArgs.cs" />
+    <Compile Include="EventProxy.cs" />
     <Compile Include="MessageReceivedEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RemoteMessage.cs" />

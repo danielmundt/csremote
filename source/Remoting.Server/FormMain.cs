@@ -20,6 +20,7 @@
 #endregion Header
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -27,6 +28,7 @@ using System.Drawing;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Ipc;
+using System.Runtime.Serialization.Formatters;
 using System.Text;
 using System.Windows.Forms;
 
@@ -56,23 +58,33 @@ namespace Remoting.Server
 
 		private void InitializeServer()
 		{
-			RemoteMessage remoteMessage = new RemoteMessage();
+			Service remoteMessage = new Service();
 			remoteMessage.MessageReceived +=
-				new EventHandler<MessageReceivedEventArgs>(MessageReceivedHandler);
+				new EventHandler<MessageReceivedEventArgs>(remoteMessage_MessageReceived);
+
+			// create custom formatter
+			BinaryServerFormatterSinkProvider provider = new BinaryServerFormatterSinkProvider();
+			provider.TypeFilterLevel = TypeFilterLevel.Full;
+
+			// set chaqnnel properties
+			IDictionary props = new Hashtable();
+			// props["name"] = "ipc server";
+			props["portName"] = "remote";
 
 			// create and register the server channel
-			IpcServerChannel serverChannel = new IpcServerChannel("remote");
+			//IpcServerChannel serverChannel = new IpcServerChannel("remote");
+			IpcServerChannel serverChannel = new IpcServerChannel(props, provider);
 			ChannelServices.RegisterChannel(serverChannel, false);
 
 			// expose object for remote calls
 			RemotingConfiguration.RegisterWellKnownServiceType(
-				typeof(RemoteMessage), "message", WellKnownObjectMode.SingleCall);
-			RemotingServices.Marshal(remoteMessage, "message");
+				typeof(Service), "service", WellKnownObjectMode.Singleton);
+            RemotingServices.Marshal(remoteMessage, "service");
 		}
 
-		private void MessageReceivedHandler(object sender, MessageReceivedEventArgs e)
+		private void remoteMessage_MessageReceived(object sender, MessageReceivedEventArgs e)
 		{
-			SetText("MessageReceived: " + (string)e.UserObject);
+			SetText(string.Format("Message: ID: {0}, Payload: \"{1}\"", e.ClientId, (string)e.UserObject));
 			SetText(Environment.NewLine);
 		}
 

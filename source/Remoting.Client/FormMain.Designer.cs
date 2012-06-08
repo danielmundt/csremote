@@ -30,11 +30,14 @@
         {
             this.btnSend = new System.Windows.Forms.Button();
             this.tbLog = new System.Windows.Forms.TextBox();
+            this.tbClientId = new System.Windows.Forms.TextBox();
+            this.lblId = new System.Windows.Forms.Label();
+            this.btnRegister = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnSend
             // 
-            this.btnSend.Location = new System.Drawing.Point(12, 12);
+            this.btnSend.Location = new System.Drawing.Point(12, 43);
             this.btnSend.Name = "btnSend";
             this.btnSend.Size = new System.Drawing.Size(75, 23);
             this.btnSend.TabIndex = 0;
@@ -47,22 +50,54 @@
             this.tbLog.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbLog.Location = new System.Drawing.Point(12, 41);
+            this.tbLog.Location = new System.Drawing.Point(12, 72);
             this.tbLog.Multiline = true;
             this.tbLog.Name = "tbLog";
             this.tbLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.tbLog.Size = new System.Drawing.Size(260, 209);
+            this.tbLog.Size = new System.Drawing.Size(460, 178);
             this.tbLog.TabIndex = 2;
+            // 
+            // tbClientId
+            // 
+            this.tbClientId.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbClientId.Location = new System.Drawing.Point(125, 14);
+            this.tbClientId.Name = "tbClientId";
+            this.tbClientId.Size = new System.Drawing.Size(347, 20);
+            this.tbClientId.TabIndex = 3;
+            // 
+            // lblId
+            // 
+            this.lblId.AutoSize = true;
+            this.lblId.Location = new System.Drawing.Point(101, 17);
+            this.lblId.Name = "lblId";
+            this.lblId.Size = new System.Drawing.Size(18, 13);
+            this.lblId.TabIndex = 4;
+            this.lblId.Text = "ID";
+            // 
+            // btnRegister
+            // 
+            this.btnRegister.Location = new System.Drawing.Point(12, 11);
+            this.btnRegister.Name = "btnRegister";
+            this.btnRegister.Size = new System.Drawing.Size(75, 23);
+            this.btnRegister.TabIndex = 5;
+            this.btnRegister.Text = "&Register";
+            this.btnRegister.UseVisualStyleBackColor = true;
+            this.btnRegister.Click += new System.EventHandler(this.btnRegister_Click);
             // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 262);
+            this.ClientSize = new System.Drawing.Size(484, 262);
+            this.Controls.Add(this.btnRegister);
+            this.Controls.Add(this.lblId);
+            this.Controls.Add(this.tbClientId);
             this.Controls.Add(this.tbLog);
             this.Controls.Add(this.btnSend);
             this.Name = "FormMain";
             this.Text = "Client";
+            this.Load += new System.EventHandler(this.FormMain_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -72,6 +107,9 @@
 
         private System.Windows.Forms.Button btnSend;
         private System.Windows.Forms.TextBox tbLog;
+        private System.Windows.Forms.TextBox tbClientId;
+        private System.Windows.Forms.Label lblId;
+        private System.Windows.Forms.Button btnRegister;
     }
 }
 

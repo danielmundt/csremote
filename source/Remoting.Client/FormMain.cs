@@ -43,7 +43,7 @@ namespace Remoting.Client
 	{
 		#region Fields
 
-		private Service remoteMessage;
+		private RemoteMessage remoteMessage;
 		private CallbackSink _CallbackSink = null;
 
 		#endregion Fields
@@ -121,8 +121,8 @@ namespace Remoting.Client
 			ChannelServices.RegisterChannel(clientChannel, false);
 
 			// create transparent proxy to server component
-			remoteMessage = (Service)Activator.GetObject(
-				typeof(Service), "ipc://remote/service");
+			remoteMessage = (RemoteMessage)Activator.GetObject(
+				typeof(RemoteMessage), "ipc://remote/service");
 		}
 
 		private void remoteMessage_MessageReceived(object sender, MessageReceivedEventArgs e)

@@ -36,6 +36,7 @@ namespace Remoting.Service
 		#region Events
 
 		public event EventHandler<ClientAddedEventArgs> ClientAdded;
+
 		public event EventHandler<MessageReceivedEventArgs> MessageReceived;
 
 		#endregion Events
@@ -48,23 +49,7 @@ namespace Remoting.Service
 			return null;
 		}
 
-		public void Register(string clientId, delCommsInfo htc)
-		{
-			ClientInfo item = new ClientInfo(clientId, htc);
-			if (!clients.Contains(item))
-			{
-				clients.Add(item);
-				OnClientAdded(new ClientAddedEventArgs(clientId));
-			}
-		}
-
-        // called from service client to send a messsage
-		public void PushMessage(string clientId, Object obj)
-		{
-			OnMessageReceived(new MessageReceivedEventArgs(clientId, obj));
-		}
-
-        // called from service server to send client an event
+		// called from service server to send client an event
 		public void PushEvent(string clientId, Object obj)
 		{
 			foreach (ClientInfo clientInfo in clients)
@@ -73,6 +58,22 @@ namespace Remoting.Service
 				{
 					clientInfo.Send(clientId, obj);
 				}
+			}
+		}
+
+		// called from service client to send a messsage
+		public void PushMessage(string clientId, Object obj)
+		{
+			OnMessageReceived(new MessageReceivedEventArgs(clientId, obj));
+		}
+
+		public void Register(string clientId, delCommsInfo htc)
+		{
+			ClientInfo item = new ClientInfo(clientId, htc);
+			if (!clients.Contains(item))
+			{
+				clients.Add(item);
+				OnClientAdded(new ClientAddedEventArgs(clientId));
 			}
 		}
 

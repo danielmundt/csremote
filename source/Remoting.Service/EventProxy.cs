@@ -1,4 +1,4 @@
-﻿#region Header
+#region Header
 
 // Copyright (C) 2012 Daniel Schubert
 //
@@ -25,7 +25,7 @@ using System.Text;
 
 namespace Remoting.Interface
 {
-    public class EventProxy
-    {
-    }
+	public class EventProxy
+	{
+	}
 }

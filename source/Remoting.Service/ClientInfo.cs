@@ -1,4 +1,4 @@
-﻿#region Header
+#region Header
 
 // Copyright (C) 2012 Daniel Schubert
 //
@@ -31,16 +31,16 @@ namespace Remoting.Service
 		#region Fields
 
 		private string clientId;
-        private delCommsInfo hostToClient;
+		private delCommsInfo hostToClient;
 
 		#endregion Fields
 
 		#region Constructors
 
-        public ClientInfo(string clientId, delCommsInfo hostToClient)
+		public ClientInfo(string clientId, delCommsInfo hostToClient)
 		{
 			this.clientId = clientId;
-            this.hostToClient = hostToClient;
+			this.hostToClient = hostToClient;
 		}
 
 		#endregion Constructors
@@ -67,10 +67,10 @@ namespace Remoting.Service
 			}
 		}
 
-        public delCommsInfo HostToClient
-        {
-            get { return hostToClient; }
-        }
+		public delCommsInfo HostToClient
+		{
+			get { return hostToClient; }
+		}
 
 		#endregion Properties
 
@@ -91,7 +91,6 @@ namespace Remoting.Service
 
 			return (clientId == other.ClientId);
 		} */
-
 		/* public bool Equals(ClientInfo other)
 		{
 			// If parameter is null return false:
@@ -103,15 +102,13 @@ namespace Remoting.Service
 			// Return true if the fields match:
 			return (clientId == other.ClientId);
 		} */
-
 		/* public override int GetHashCode()
 		{
-	    	return clientId.GetHashCode();
+			return clientId.GetHashCode();
 		} */
-
 		public void Send(string clientId, Object obj)
 		{
-            HostToClient("Hello World");
+			HostToClient("Hello World");
 			// OnMessageReceived(new MessageReceivedEventArgs(clientId, obj));
 		}
 

@@ -44,6 +44,7 @@ namespace Remoting.Client
 		#region Fields
 
 		private Service remoteMessage;
+		private CallbackSink _CallbackSink = null;
 
 		#endregion Fields
 
@@ -90,8 +91,8 @@ namespace Remoting.Client
 			{
 				// remoteMessage.MessageReceived +=
 				//    new EventHandler<MessageReceivedEventArgs>(remoteMessage_MessageReceived);
-                remoteMessage.Register(tbClientId.Text,
-                    new delCommsInfo(_CallbackSink.HandleToClient));
+				remoteMessage.Register(tbClientId.Text,
+					new delCommsInfo(_CallbackSink.HandleToClient));
 			}
 		}
 
@@ -100,21 +101,20 @@ namespace Remoting.Client
 			SendMessage();
 		}
 
+		void CallbackSink_OnHostToClient(Object obj)
+		{
+			int i = 0;
+		}
+
 		private void FormMain_Load(object sender, EventArgs e)
 		{
 			tbClientId.Text = Guid.NewGuid().ToString("N");
 		}
 
-        private CallbackSink _CallbackSink = null;
-        void CallbackSink_OnHostToClient(Object obj)
-        {
-            int i = 0;
-        }
-
 		private void InitializeClient()
 		{
-            _CallbackSink = new CallbackSink();
-            _CallbackSink.OnHostToClient += new delCommsInfo(CallbackSink_OnHostToClient);
+			_CallbackSink = new CallbackSink();
+			_CallbackSink.OnHostToClient += new delCommsInfo(CallbackSink_OnHostToClient);
 
 			// create and register the channel
 			IpcClientChannel clientChannel = new IpcClientChannel();

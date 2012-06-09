@@ -26,11 +26,11 @@ using System.Text;
 namespace Remoting.Service
 {
     public delegate void MessageArrivedEvent(Object obj);
-    public delegate void EventSentEvent(Object obj);
+    public delegate void EventCallback(Object obj);
 
     public class EventProxy : MarshalByRefObject
     {
-        public event EventSentEvent EventSent;
+        public event EventCallback EventSent;
 
         public override object InitializeLifetimeService()
         {
@@ -45,7 +45,7 @@ namespace Remoting.Service
                 Delegate[] delegates = EventSent.GetInvocationList();
                 foreach (Delegate del in delegates)
                 {
-                    EventSentEvent listener = (EventSentEvent)del;
+                    EventCallback listener = (EventCallback)del;
                     listener.BeginInvoke(obj, null, null);
                 }
             }

@@ -28,20 +28,30 @@ namespace Remoting.Service
 	[Serializable]
 	public class ClientInfo
 	{
-		private string clientId;
+		private string id;
+        private EventCallback callback;
 
-		public ClientInfo(string clientId)
+		public ClientInfo(string id, EventCallback callback)
 		{
-			this.clientId = clientId;
+			this.id = id;
+            this.callback = callback;
 		}
 
 		public string ClientId
 		{
 			get
 			{
-				return clientId;
+				return id;
 			}
 		}
+
+        public EventCallback Callback
+        {
+            get
+            {
+                return callback;
+            }
+        }
 
 		public override bool Equals(Object obj)
 		{
@@ -56,7 +66,7 @@ namespace Remoting.Service
 				return false;
 			}
 
-			return (clientId == other.ClientId);
+			return (id == other.ClientId);
 		}
 
 		public bool Equals(ClientInfo other)
@@ -68,12 +78,20 @@ namespace Remoting.Service
 			}
 
 			// Return true if the fields match:
-			return (clientId == other.ClientId);
+			return (id == other.ClientId);
 		}
 
 		public override int GetHashCode()
 		{
-			return clientId.GetHashCode();
+			return id.GetHashCode();
 		}
+
+        public void PublishEvent(Object obj)
+        {
+            if (callback != null)
+            {
+                callback(obj);
+            }
+        }
 	}
 }

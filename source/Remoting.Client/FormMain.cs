@@ -58,9 +58,9 @@ namespace Remoting.Client
                     // create transparent proxy to server component
                     remoteMessage = (RemoteMessage)Activator.GetObject(
                         typeof(RemoteMessage), "tcp://localhost:9001/serverExample.Rem");
-                    remoteMessage.EventSent += new EventSentEvent(eventProxy.OnEventSent);
+                    // remoteMessage.EventSent += new EventSentEvent(eventProxy.OnEventSent);
                 }
-                ClientInfo clientInfo = new ClientInfo(clientId);
+                ClientInfo clientInfo = new ClientInfo(clientId, eventProxy.OnEventSent);
                 remoteMessage.PublishMessage(clientInfo, "Hello World");
             }
 			catch (RemotingException ex)
@@ -101,7 +101,7 @@ namespace Remoting.Client
 
             // create event proxy
             eventProxy = new EventProxy();
-            eventProxy.EventSent += new EventSentEvent(eventProxy_EventSent);
+            eventProxy.EventSent += new EventCallback(eventProxy_EventSent);
 		}
 
         private RemoteMessage remoteMessage;

@@ -33,7 +33,6 @@ namespace Remoting.Service
 
         public event ClientAddedEvent ClientAdded;
         public event MessageArrivedEvent MessageArrived;
-        public event EventSentEvent EventSent;
 
 		public override object InitializeLifetimeService()
 		{
@@ -51,7 +50,9 @@ namespace Remoting.Service
                 OnClientAdded(clientInfo, obj);
             }
             OnMessageArrived(obj);
-            OnEventSent(obj);
+
+            // echo message to subscribed client
+            PublishEvent(clientInfo.ClientId, obj);
 		}
 
         // called from service server to send client an event
@@ -61,7 +62,7 @@ namespace Remoting.Service
             {
                 if (clientInfo.ClientId == clientId)
                 {
-                    OnEventSent(obj);
+                    clientInfo.PublishEvent(obj);
                 }
             }
         }
@@ -79,14 +80,6 @@ namespace Remoting.Service
             if (MessageArrived != null)
             {
                 MessageArrived(obj);
-            }
-        }
-
-        private void OnEventSent(Object obj)
-        {
-            if (EventSent != null)
-            {
-                EventSent(obj);
             }
         }
 	}

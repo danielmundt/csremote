@@ -25,12 +25,15 @@ using System.Text;
 
 namespace Remoting.Service
 {
-	public class RemoteMessage : MarshalByRefObject
+    public delegate void ClientAddedEvent(ClientInfo clientInfo, Object obj);
+    
+    public class RemoteMessage : MarshalByRefObject
 	{
-		private List<ClientInfo> clients = new List<ClientInfo>();
-        public delegate void ClientAddedEvent(string clientId, Object obj);
+        private List<ClientInfo> clients = new List<ClientInfo>();
+
         public event ClientAddedEvent ClientAdded;
         public event MessageArrivedEvent MessageArrived;
+        public event EventSentEvent EventSent;
 
 		public override object InitializeLifetimeService()
 		{
@@ -38,35 +41,36 @@ namespace Remoting.Service
 			return null;
 		}
 
-		// called from service server to send client an event
-		/* public void PushEvent(string clientId, Object obj)
-		{
-			foreach (ClientInfo clientInfo in clients)
-			{
-				if (clientInfo.ClientId == clientId)
-				{
-					// clientInfo.Send(clientId, obj);
-				}
-			}
-		} */
-
 		// called from client to publish a messsage
-        public void PublishMessage(string clientId, Object obj)
+        public void PublishMessage(ClientInfo clientInfo, Object obj)
 		{
-            ClientInfo item = new ClientInfo(clientId, null);
-            if (!clients.Contains(item))
+            // register client and notify listeners
+            if (!clients.Contains(clientInfo))
             {
-                clients.Add(item);
-                OnClientAdded(clientId, obj);
+                clients.Add(clientInfo);
+                OnClientAdded(clientInfo, obj);
             }
             OnMessageArrived(obj);
+            OnEventSent(obj);
 		}
 
-		private void OnClientAdded(string clientId, Object obj)
+        // called from service server to send client an event
+        public void PublishEvent(string clientId, Object obj)
+        {
+            foreach (ClientInfo clientInfo in clients)
+            {
+                if (clientInfo.ClientId == clientId)
+                {
+                    OnEventSent(obj);
+                }
+            }
+        }
+
+        private void OnClientAdded(ClientInfo clientInfo, Object obj)
 		{
 			if (ClientAdded != null)
 			{
-				ClientAdded(clientId, obj);
+				ClientAdded(clientInfo, obj);
 			}
 		}
 
@@ -74,12 +78,15 @@ namespace Remoting.Service
         {
             if (MessageArrived != null)
             {
-                Delegate[] delegates = MessageArrived.GetInvocationList();
-                foreach (Delegate d in delegates)
-                {
-                    MessageArrivedEvent listener = (MessageArrivedEvent)d;
-                    listener.Invoke(obj);
-                }
+                MessageArrived(obj);
+            }
+        }
+
+        private void OnEventSent(Object obj)
+        {
+            if (EventSent != null)
+            {
+                EventSent(obj);
             }
         }
 	}

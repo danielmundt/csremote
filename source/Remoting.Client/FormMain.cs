@@ -49,15 +49,19 @@ namespace Remoting.Client
 
 		delegate void SetTextCallback(string text);
 
-		public void SendMessage(string message)
+		public void SendMessage(string clientId)
 		{
 			try
 			{
-                // create transparent proxy to server component
-                RemoteMessage remoteMessage = (RemoteMessage)Activator.GetObject(
-                    typeof(RemoteMessage), "tcp://localhost:9001/serverExample.Rem");
-                remoteMessage.PublishMessage(message, "Hello World");
-                remoteMessage.MessageArrived += new MessageArrivedEvent(eventProxy.OnMessageArrived);
+                if (remoteMessage == null)
+                {
+                    // create transparent proxy to server component
+                    remoteMessage = (RemoteMessage)Activator.GetObject(
+                        typeof(RemoteMessage), "tcp://localhost:9001/serverExample.Rem");
+                    remoteMessage.EventSent += new EventSentEvent(eventProxy.OnEventSent);
+                }
+                ClientInfo clientInfo = new ClientInfo(clientId);
+                remoteMessage.PublishMessage(clientInfo, "Hello World");
             }
 			catch (RemotingException ex)
 			{
@@ -97,13 +101,14 @@ namespace Remoting.Client
 
             // create event proxy
             eventProxy = new EventProxy();
-            eventProxy.MessageArrived += new MessageArrivedEvent(eventProxy_MessageArrived);
+            eventProxy.EventSent += new EventSentEvent(eventProxy_EventSent);
 		}
 
-        void eventProxy_MessageArrived(object obj)
+        private RemoteMessage remoteMessage;
+
+        void eventProxy_EventSent(object obj)
         {
-            // SetText("MessageReceived: " + (string)obj);
-            SetText("MessageReceived");
+            SetText("MessageReceived: " + (string)obj);
             SetText(Environment.NewLine);
         }
 

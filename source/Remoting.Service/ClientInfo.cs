@@ -29,12 +29,10 @@ namespace Remoting.Service
 	public class ClientInfo
 	{
 		private string clientId;
-        private MessageArrivedEvent arrivedEvent;
 
-		public ClientInfo(string clientId, MessageArrivedEvent arrivedEvent)
+		public ClientInfo(string clientId)
 		{
 			this.clientId = clientId;
-            this.arrivedEvent = arrivedEvent;
 		}
 
 		public string ClientId
@@ -43,11 +41,6 @@ namespace Remoting.Service
 			{
 				return clientId;
 			}
-		}
-
-        public MessageArrivedEvent ArrivedEvent
-		{
-            get { return arrivedEvent; }
 		}
 
 		public override bool Equals(Object obj)

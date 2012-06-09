@@ -58,10 +58,6 @@ namespace Remoting.Server
 
 		private void InitializeServer()
 		{
-			RemoteMessage remoteMessage = new RemoteMessage();
-            remoteMessage.ClientAdded += new RemoteMessage.ClientAddedEvent(remoteMessage_ClientAdded);
-            remoteMessage.MessageArrived += new MessageArrivedEvent(remoteMessage_MessageArrived);
-
             // set channel properties
             IDictionary props = new Hashtable();
             props["port"] = 9001;
@@ -76,16 +72,22 @@ namespace Remoting.Server
 			ChannelServices.RegisterChannel(serverChannel, false);
 
 			// expose object for remote calls
-			//RemotingConfiguration.RegisterWellKnownServiceType(
+			// RemotingConfiguration.RegisterWellKnownServiceType(
             //    typeof(RemoteMessage), "serverExample.Rem", WellKnownObjectMode.Singleton);
+
+            remoteMessage = new RemoteMessage();
+            remoteMessage.ClientAdded += new ClientAddedEvent(remoteMessage_ClientAdded);
+            remoteMessage.MessageArrived += new MessageArrivedEvent(remoteMessage_MessageArrived);
 
             // publish a specific object instance
             RemotingServices.Marshal(remoteMessage, "serverExample.Rem");
-		}
+        }
 
-        void remoteMessage_ClientAdded(string clientId, object obj)
+        private RemoteMessage remoteMessage;
+
+        void remoteMessage_ClientAdded(ClientInfo clientInfo, object obj)
         {
-            SetText(string.Format("Client ID registered: {0}", clientId));
+            SetText(string.Format("Client ID registered: {0}", clientInfo.ClientId));
             SetText(Environment.NewLine);
         }
 

@@ -61,8 +61,8 @@ namespace Remoting.Server
             // set channel properties
             IDictionary props = new Hashtable();
             props["port"] = 9001;
-            props["name"] = "ServerChannel";
-            props["machineName"] = "localhost";
+            props["name"] = "server";
+            // props["machineName"] = "localhost";
 
 			// create custom formatter
 			BinaryServerFormatterSinkProvider sinkProvider = new BinaryServerFormatterSinkProvider();

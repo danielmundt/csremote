@@ -87,8 +87,8 @@ namespace Remoting.Client
             // set channel properties
             IDictionary props = new Hashtable();
             props["port"] = 0;
-            props["name"] = "ClientChannel";
-            props["machineName"] = "localhost";
+            props["name"] = "client";
+            // props["machineName"] = "localhost";
 
             // create and register the channel
             TcpChannel clientChannel = new TcpChannel(props,

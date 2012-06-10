@@ -42,7 +42,7 @@ namespace Remoting.Client
 	public partial class FormMain : Form
 	{
 
-        private RemoteService remoteService;
+        private IRemoteService remoteService;
         delegate void SetTextCallback(string text);
 
 		public FormMain()
@@ -58,8 +58,8 @@ namespace Remoting.Client
                 if (remoteService == null)
                 {
                     // create transparent proxy to server component
-                    remoteService = (RemoteService)Activator.GetObject(
-                        typeof(RemoteService), "tcp://localhost:9001/service.rem");
+                    remoteService = (IRemoteService)Activator.GetObject(
+                        typeof(IRemoteService), "tcp://localhost:9001/service.rem");
                 }
                 ClientSink clientSink = new ClientSink(clientId, eventProxy.OnEventSent);
                 remoteService.PublishMessage(clientSink, "Hello World");
@@ -99,7 +99,7 @@ namespace Remoting.Client
             // create event proxy
             eventProxy = new EventProxy();
             eventProxy.EventSent += new EventCallback(eventProxy_EventSent);
-		}
+ 		}
 
         void eventProxy_EventSent(object obj)
         {

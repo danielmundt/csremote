@@ -23,17 +23,16 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Remoting.Service
+using Remoting.Service;
+
+namespace Remoting.Server
 {
-    public delegate void ClientAddedEvent(ClientSink clientSink, Object obj);
-    public delegate void MessageArrivedEvent(Object obj);
-    
-    public class RemoteService : MarshalByRefObject
+    public class RemoteService : MarshalByRefObject, IRemoteService
 	{
         private List<ClientSink> clients = new List<ClientSink>();
 
-        public event ClientAddedEvent ClientAdded;
-        public event MessageArrivedEvent MessageArrived;
+        public event EventHandler<ClientAddedEventArgs> ClientAdded;
+        public event EventHandler<MessageReceivedEventArgs> MessageReceived;
 
 		public override object InitializeLifetimeService()
 		{
@@ -48,9 +47,10 @@ namespace Remoting.Service
             if (!clients.Contains(clientSink))
             {
                 clients.Add(clientSink);
-                OnClientAdded(clientSink, obj);
+                OnClientAdded(new ClientAddedEventArgs(clientSink));
             }
-            OnMessageArrived(obj);
+            // OnMessageArrived(obj);
+            OnMessageReceived(new MessageReceivedEventArgs(obj));
 
             // echo message to subscribed client
             PublishEvent(clientSink.Name, obj);
@@ -68,19 +68,19 @@ namespace Remoting.Service
             }
         }
 
-        private void OnClientAdded(ClientSink clientSink, Object obj)
+        private void OnClientAdded(ClientAddedEventArgs e)
 		{
 			if (ClientAdded != null)
 			{
-				ClientAdded(clientSink, obj);
+				ClientAdded(this, e);
 			}
 		}
 
-        private void OnMessageArrived(Object obj)
+        private void OnMessageReceived(MessageReceivedEventArgs e)
         {
-            if (MessageArrived != null)
+            if (MessageReceived != null)
             {
-                MessageArrived(obj);
+                MessageReceived(this, e);
             }
         }
 	}

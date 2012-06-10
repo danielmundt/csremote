@@ -38,23 +38,14 @@ namespace Remoting.Server
 {
 	public partial class FormMain : Form
 	{
-		#region Constructors
+        delegate void SetTextCallback(string text);
+        private RemoteService remoteMessage;
 
 		public FormMain()
 		{
 			InitializeComponent();
 			InitializeServer();
 		}
-
-		#endregion Constructors
-
-		#region Delegates
-
-		delegate void SetTextCallback(string text);
-
-		#endregion Delegates
-
-		#region Methods
 
 		private void InitializeServer()
 		{
@@ -73,24 +64,22 @@ namespace Remoting.Server
 			ChannelServices.RegisterChannel(serverChannel, false);
 
             remoteMessage = new RemoteService();
-            remoteMessage.ClientAdded += new ClientAddedEvent(remoteMessage_ClientAdded);
-            remoteMessage.MessageArrived += new MessageArrivedEvent(remoteMessage_MessageArrived);
+            remoteMessage.ClientAdded += new EventHandler<ClientAddedEventArgs>(remoteMessage_ClientAdded);
+            remoteMessage.MessageReceived += new EventHandler<MessageReceivedEventArgs>(remoteMessage_MessageReceived);
 
             // publish a specific object instance
             RemotingServices.Marshal(remoteMessage, "service.rem");
         }
 
-        private RemoteService remoteMessage;
-
-        void remoteMessage_ClientAdded(ClientSink clientSink, object obj)
+        void remoteMessage_ClientAdded(object sender, ClientAddedEventArgs e)
         {
-            SetText(string.Format("Client ID registered: {0}", clientSink.Name));
+            SetText(string.Format("Client ID registered: {0}", e.Sink.Name));
             SetText(Environment.NewLine);
         }
 
-        void remoteMessage_MessageArrived(object obj)
+        void remoteMessage_MessageReceived(object sender, MessageReceivedEventArgs e)
         {
-            SetText(string.Format("Message arrived: {0}", obj));
+            SetText(string.Format("Message arrived: {0}", e.UserObject));
             SetText(Environment.NewLine);
         }
 
@@ -107,7 +96,5 @@ namespace Remoting.Server
 				tbLog.AppendText(text);
 			}
 		}
-
-		#endregion Methods
 	}
 }

@@ -4,6 +4,7 @@ using System.Text;
 
 namespace Remoting.Service
 {
+    [Serializable]
     public class MessageReceivedEventArgs : EventArgs
     {
         private object userObject;

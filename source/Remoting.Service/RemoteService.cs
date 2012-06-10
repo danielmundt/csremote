@@ -27,7 +27,7 @@ namespace Remoting.Service
 {
     public delegate void ClientAddedEvent(ClientInfo clientInfo, Object obj);
     
-    public class RemoteMessage : MarshalByRefObject
+    public class RemoteService : MarshalByRefObject
 	{
         private List<ClientInfo> clients = new List<ClientInfo>();
 

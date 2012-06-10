@@ -61,7 +61,7 @@ namespace Remoting.Server
             // set channel properties
             IDictionary props = new Hashtable();
             props["port"] = 9001;
-            props["name"] = "serverExample.Rem";
+            props["name"] = "ServerChannel";
 
 			// create custom formatter
 			BinaryServerFormatterSinkProvider provider = new BinaryServerFormatterSinkProvider();
@@ -71,19 +71,15 @@ namespace Remoting.Server
             TcpServerChannel serverChannel = new TcpServerChannel(props, provider);
 			ChannelServices.RegisterChannel(serverChannel, false);
 
-			// expose object for remote calls
-			// RemotingConfiguration.RegisterWellKnownServiceType(
-            //    typeof(RemoteMessage), "serverExample.Rem", WellKnownObjectMode.Singleton);
-
-            remoteMessage = new RemoteMessage();
+            remoteMessage = new RemoteService();
             remoteMessage.ClientAdded += new ClientAddedEvent(remoteMessage_ClientAdded);
             remoteMessage.MessageArrived += new MessageArrivedEvent(remoteMessage_MessageArrived);
 
             // publish a specific object instance
-            RemotingServices.Marshal(remoteMessage, "serverExample.Rem");
+            RemotingServices.Marshal(remoteMessage, "service.rem");
         }
 
-        private RemoteMessage remoteMessage;
+        private RemoteService remoteMessage;
 
         void remoteMessage_ClientAdded(ClientInfo clientInfo, object obj)
         {

@@ -41,27 +41,28 @@ namespace Remoting.Client
 {
 	public partial class FormMain : Form
 	{
+
+        private RemoteService remoteService;
+        delegate void SetTextCallback(string text);
+
 		public FormMain()
 		{
 			InitializeComponent();
 			InitializeClient();
 		}
 
-		delegate void SetTextCallback(string text);
-
 		public void SendMessage(string clientId)
 		{
 			try
 			{
-                if (remoteMessage == null)
+                if (remoteService == null)
                 {
                     // create transparent proxy to server component
-                    remoteMessage = (RemoteMessage)Activator.GetObject(
-                        typeof(RemoteMessage), "tcp://localhost:9001/serverExample.Rem");
-                    // remoteMessage.EventSent += new EventSentEvent(eventProxy.OnEventSent);
+                    remoteService = (RemoteService)Activator.GetObject(
+                        typeof(RemoteService), "tcp://localhost:9001/service.rem");
                 }
                 ClientInfo clientInfo = new ClientInfo(clientId, eventProxy.OnEventSent);
-                remoteMessage.PublishMessage(clientInfo, "Hello World");
+                remoteService.PublishMessage(clientInfo, "Hello World");
             }
 			catch (RemotingException ex)
 			{
@@ -88,23 +89,21 @@ namespace Remoting.Client
             serverProvider.TypeFilterLevel = TypeFilterLevel.Full;
 
             IDictionary props = new Hashtable();
-            props["name"] = "remotingClient";
             props["port"] = 0;
+            props["name"] = "ClientChannel";
 
 			// create and register the channel
             TcpChannel clientChannel = new TcpChannel(props, clientProvider, serverProvider);
             ChannelServices.RegisterChannel(clientChannel, false);
 
             RemotingConfiguration.RegisterWellKnownClientType(
-                new WellKnownClientTypeEntry(typeof(RemoteMessage),
-                    "tcp://localhost:9000/serverExample.Rem"));
+                new WellKnownClientTypeEntry(typeof(RemoteService),
+                    "tcp://localhost:9000/service1.rem"));
 
             // create event proxy
             eventProxy = new EventProxy();
             eventProxy.EventSent += new EventCallback(eventProxy_EventSent);
 		}
-
-        private RemoteMessage remoteMessage;
 
         void eventProxy_EventSent(object obj)
         {

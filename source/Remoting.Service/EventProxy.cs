@@ -41,12 +41,8 @@ namespace Remoting.Service
         {
             if (EventSent != null)
             {
-                Delegate[] delegates = EventSent.GetInvocationList();
-                foreach (Delegate del in delegates)
-                {
-                    EventCallback listener = (EventCallback)del;
-                    listener.BeginInvoke(obj, null, null);
-                }
+                // asynchronous listener invocation
+                EventSent.BeginInvoke(obj, null, null);
             }
         }
     }

@@ -25,11 +25,12 @@ using System.Text;
 
 namespace Remoting.Service
 {
-    public delegate void ClientAddedEvent(ClientInfo clientInfo, Object obj);
+    public delegate void ClientAddedEvent(ClientSink clientSink, Object obj);
+    public delegate void MessageArrivedEvent(Object obj);
     
     public class RemoteService : MarshalByRefObject
 	{
-        private List<ClientInfo> clients = new List<ClientInfo>();
+        private List<ClientSink> clients = new List<ClientSink>();
 
         public event ClientAddedEvent ClientAdded;
         public event MessageArrivedEvent MessageArrived;
@@ -41,37 +42,37 @@ namespace Remoting.Service
 		}
 
 		// called from client to publish a messsage
-        public void PublishMessage(ClientInfo clientInfo, Object obj)
+        public void PublishMessage(ClientSink clientSink, Object obj)
 		{
             // register client and notify listeners
-            if (!clients.Contains(clientInfo))
+            if (!clients.Contains(clientSink))
             {
-                clients.Add(clientInfo);
-                OnClientAdded(clientInfo, obj);
+                clients.Add(clientSink);
+                OnClientAdded(clientSink, obj);
             }
             OnMessageArrived(obj);
 
             // echo message to subscribed client
-            PublishEvent(clientInfo.ClientId, obj);
+            PublishEvent(clientSink.Name, obj);
 		}
 
         // called from service server to send client an event
         public void PublishEvent(string clientId, Object obj)
         {
-            foreach (ClientInfo clientInfo in clients)
+            foreach (ClientSink clientSink in clients)
             {
-                if (clientInfo.ClientId == clientId)
+                if ((clientSink.Name == clientId) || (clientSink.Name == string.Empty))
                 {
-                    clientInfo.PublishEvent(obj);
+                    clientSink.PublishEvent(obj);
                 }
             }
         }
 
-        private void OnClientAdded(ClientInfo clientInfo, Object obj)
+        private void OnClientAdded(ClientSink clientSink, Object obj)
 		{
 			if (ClientAdded != null)
 			{
-				ClientAdded(clientInfo, obj);
+				ClientAdded(clientSink, obj);
 			}
 		}
 

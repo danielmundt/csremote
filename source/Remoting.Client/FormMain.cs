@@ -61,8 +61,8 @@ namespace Remoting.Client
                     remoteService = (RemoteService)Activator.GetObject(
                         typeof(RemoteService), "tcp://localhost:9001/service.rem");
                 }
-                ClientInfo clientInfo = new ClientInfo(clientId, eventProxy.OnEventSent);
-                remoteService.PublishMessage(clientInfo, "Hello World");
+                ClientSink clientSink = new ClientSink(clientId, eventProxy.OnEventSent);
+                remoteService.PublishMessage(clientSink, "Hello World");
             }
 			catch (RemotingException ex)
 			{
@@ -84,16 +84,16 @@ namespace Remoting.Client
 
 		private void InitializeClient()
 		{
-            BinaryClientFormatterSinkProvider clientProvider = new BinaryClientFormatterSinkProvider();
-            BinaryServerFormatterSinkProvider serverProvider = new BinaryServerFormatterSinkProvider();
-            serverProvider.TypeFilterLevel = TypeFilterLevel.Full;
-
+            // set channel properties
             IDictionary props = new Hashtable();
             props["port"] = 0;
             props["name"] = "ClientChannel";
+            props["machineName"] = "localhost";
 
-			// create and register the channel
-            TcpChannel clientChannel = new TcpChannel(props, clientProvider, serverProvider);
+            // create and register the channel
+            TcpChannel clientChannel = new TcpChannel(props,
+                new BinaryClientFormatterSinkProvider(),
+                new BinaryServerFormatterSinkProvider());
             ChannelServices.RegisterChannel(clientChannel, false);
 
             // create event proxy

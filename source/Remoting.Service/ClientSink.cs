@@ -26,22 +26,22 @@ using System.Text;
 namespace Remoting.Service
 {
 	[Serializable]
-	public class ClientInfo
+	public class ClientSink
 	{
-		private string id;
+		private string name;
         private EventCallback callback;
 
-		public ClientInfo(string id, EventCallback callback)
+		public ClientSink(string name, EventCallback callback)
 		{
-			this.id = id;
+			this.name = name;
             this.callback = callback;
 		}
 
-		public string ClientId
+		public string Name
 		{
 			get
 			{
-				return id;
+				return name;
 			}
 		}
 
@@ -60,16 +60,16 @@ namespace Remoting.Service
 				return false;
 			}
 
-			ClientInfo other = obj as ClientInfo;
+			ClientSink other = obj as ClientSink;
 			if ((Object)other == null)
 			{
 				return false;
 			}
 
-			return (id == other.ClientId);
+            return ((name == other.Name) && (callback == other.Callback));
 		}
 
-		public bool Equals(ClientInfo other)
+		public bool Equals(ClientSink other)
 		{
 			// If parameter is null return false:
 			if ((object)other == null)
@@ -78,12 +78,12 @@ namespace Remoting.Service
 			}
 
 			// Return true if the fields match:
-			return (id == other.ClientId);
+            return ((name == other.Name) && (callback == other.Callback));
 		}
 
 		public override int GetHashCode()
 		{
-			return id.GetHashCode();
+			return (name.GetHashCode() ^ callback.GetHashCode());
 		}
 
         public void PublishEvent(Object obj)

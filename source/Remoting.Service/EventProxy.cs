@@ -25,7 +25,6 @@ using System.Text;
 
 namespace Remoting.Service
 {
-    public delegate void MessageArrivedEvent(Object obj);
     public delegate void EventCallback(Object obj);
 
     public class EventProxy : MarshalByRefObject

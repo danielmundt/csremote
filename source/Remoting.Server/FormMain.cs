@@ -62,13 +62,14 @@ namespace Remoting.Server
             IDictionary props = new Hashtable();
             props["port"] = 9001;
             props["name"] = "ServerChannel";
+            props["machineName"] = "localhost";
 
 			// create custom formatter
-			BinaryServerFormatterSinkProvider provider = new BinaryServerFormatterSinkProvider();
-			provider.TypeFilterLevel = TypeFilterLevel.Full;
+			BinaryServerFormatterSinkProvider sinkProvider = new BinaryServerFormatterSinkProvider();
+            sinkProvider.TypeFilterLevel = TypeFilterLevel.Full;
 
 			// create and register the server channel
-            TcpServerChannel serverChannel = new TcpServerChannel(props, provider);
+            TcpServerChannel serverChannel = new TcpServerChannel(props, sinkProvider);
 			ChannelServices.RegisterChannel(serverChannel, false);
 
             remoteMessage = new RemoteService();
@@ -81,9 +82,9 @@ namespace Remoting.Server
 
         private RemoteService remoteMessage;
 
-        void remoteMessage_ClientAdded(ClientInfo clientInfo, object obj)
+        void remoteMessage_ClientAdded(ClientSink clientSink, object obj)
         {
-            SetText(string.Format("Client ID registered: {0}", clientInfo.ClientId));
+            SetText(string.Format("Client ID registered: {0}", clientSink.Name));
             SetText(Environment.NewLine);
         }
 

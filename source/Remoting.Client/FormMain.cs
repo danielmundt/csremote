@@ -96,10 +96,6 @@ namespace Remoting.Client
             TcpChannel clientChannel = new TcpChannel(props, clientProvider, serverProvider);
             ChannelServices.RegisterChannel(clientChannel, false);
 
-            RemotingConfiguration.RegisterWellKnownClientType(
-                new WellKnownClientTypeEntry(typeof(RemoteService),
-                    "tcp://localhost:9000/service1.rem"));
-
             // create event proxy
             eventProxy = new EventProxy();
             eventProxy.EventSent += new EventCallback(eventProxy_EventSent);

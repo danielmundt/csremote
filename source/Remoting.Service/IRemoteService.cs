@@ -23,6 +23,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+using Remoting.Service.Events;
+
 namespace Remoting.Service
 {
     public interface IRemoteService

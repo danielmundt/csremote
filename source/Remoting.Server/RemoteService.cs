@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using Remoting.Service;
+using Remoting.Service.Events;
 
 namespace Remoting.Server
 {

@@ -33,6 +33,7 @@ using System.Text;
 using System.Windows.Forms;
 
 using Remoting.Service;
+using Remoting.Service.Events;
 
 namespace Remoting.Server
 {

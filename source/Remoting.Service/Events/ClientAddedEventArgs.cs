@@ -25,22 +25,34 @@ using System.Text;
 
 namespace Remoting.Service.Events
 {
-    [Serializable]
-    public class ClientAddedEventArgs : EventArgs
-    {
-        private ClientSink clientSink;
+	[Serializable]
+	public class ClientAddedEventArgs : EventArgs
+	{
+		#region Fields
 
-        public ClientAddedEventArgs(ClientSink clientSink)
-        {
-            this.clientSink = clientSink;
-        }
+		private ClientSink sink;
 
-        public ClientSink Sink
-        {
-            get
-            {
-                return clientSink;
-            }
-        }
-    }
+		#endregion Fields
+
+		#region Constructors
+
+		public ClientAddedEventArgs(ClientSink sink)
+		{
+			this.sink = sink;
+		}
+
+		#endregion Constructors
+
+		#region Properties
+
+		public ClientSink Sink
+		{
+			get
+			{
+				return sink;
+			}
+		}
+
+		#endregion Properties
+	}
 }

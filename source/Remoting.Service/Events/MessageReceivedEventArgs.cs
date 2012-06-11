@@ -25,22 +25,44 @@ using System.Text;
 
 namespace Remoting.Service.Events
 {
-    [Serializable]
-    public class MessageReceivedEventArgs : EventArgs
-    {
-        private object userObject;
+	[Serializable]
+	public class MessageReceivedEventArgs : EventArgs
+	{
+		#region Fields
 
-        public MessageReceivedEventArgs(Object userObject)
-        {
-            this.userObject = userObject;
-        }
+		private string name;
+		private Object userObject;
 
-        public Object UserObject
-        {
-            get
-            {
-                return userObject;
-            }
-        }
-    }
+		#endregion Fields
+
+		#region Constructors
+
+		public MessageReceivedEventArgs(String name, Object userObject)
+		{
+			this.name = name;
+			this.userObject = userObject;
+		}
+
+		#endregion Constructors
+
+		#region Properties
+
+		public String Name
+		{
+			get
+			{
+				return name;
+			}
+		}
+
+		public Object UserObject
+		{
+			get
+			{
+				return userObject;
+			}
+		}
+
+		#endregion Properties
+	}
 }

@@ -27,12 +27,14 @@ using Remoting.Service.Events;
 
 namespace Remoting.Service
 {
-    public interface IRemoteService
-    {
-        event EventHandler<ClientAddedEventArgs> ClientAdded;
-        event EventHandler<MessageReceivedEventArgs> MessageReceived;
+	public interface IRemoteService
+	{
+		#region Methods
 
-        void PublishMessage(ClientSink clientSink, Object obj);
-        void PublishEvent(string clientId, Object obj);
-    }
+		void DispatchCall(ClientSink sink, Object obj);
+
+		void DispatchEvent(String name, Object obj);
+
+		#endregion Methods
+	}
 }

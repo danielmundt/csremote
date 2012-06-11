@@ -40,7 +40,7 @@
   <ItemGroup>
     <Compile Include="ClientSink.cs" />
     <Compile Include="Events\ClientAddedEventArgs.cs" />
-    <Compile Include="EventProxy.cs" />
+    <Compile Include="Events\EventDispatchedEventArgs.cs" />
     <Compile Include="IRemoteService.cs" />
     <Compile Include="Events\MessageReceivedEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

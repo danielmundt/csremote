@@ -39,8 +39,13 @@ namespace Remoting.Server
 {
 	public partial class FormMain : Form
 	{
-        delegate void SetTextCallback(string text);
-        private RemoteService remoteMessage;
+		#region Fields
+
+		private RemoteService remoteMessage;
+
+		#endregion Fields
+
+		#region Constructors
 
 		public FormMain()
 		{
@@ -48,41 +53,54 @@ namespace Remoting.Server
 			InitializeServer();
 		}
 
+		#endregion Constructors
+
+		#region Delegates
+
+		delegate void SetTextCallback(string text);
+
+		#endregion Delegates
+
+		#region Methods
+
 		private void InitializeServer()
 		{
-            // set channel properties
-            IDictionary props = new Hashtable();
-            props["port"] = 9001;
-            props["name"] = "server";
-            // props["machineName"] = "localhost";
+			// set channel properties
+			IDictionary props = new Hashtable();
+			props["port"] = 9001;
+			props["name"] = "server";
+			// props["machineName"] = "localhost";
 
 			// create custom formatter
 			BinaryServerFormatterSinkProvider sinkProvider = new BinaryServerFormatterSinkProvider();
-            sinkProvider.TypeFilterLevel = TypeFilterLevel.Full;
+			sinkProvider.TypeFilterLevel = TypeFilterLevel.Full;
 
 			// create and register the server channel
-            TcpServerChannel serverChannel = new TcpServerChannel(props, sinkProvider);
+			TcpServerChannel serverChannel = new TcpServerChannel(props, sinkProvider);
 			ChannelServices.RegisterChannel(serverChannel, false);
 
-            remoteMessage = new RemoteService();
-            remoteMessage.ClientAdded += new EventHandler<ClientAddedEventArgs>(remoteMessage_ClientAdded);
-            remoteMessage.MessageReceived += new EventHandler<MessageReceivedEventArgs>(remoteMessage_MessageReceived);
+			remoteMessage = new RemoteService();
+			remoteMessage.ClientAdded += new EventHandler<ClientAddedEventArgs>(remoteMessage_ClientAdded);
+			remoteMessage.MessageReceived += new EventHandler<MessageReceivedEventArgs>(remoteMessage_MessageReceived);
 
-            // publish a specific object instance
-            RemotingServices.Marshal(remoteMessage, "service.rem");
-        }
+			// publish a specific object instance
+			RemotingServices.Marshal(remoteMessage, "service.rem");
+		}
 
-        void remoteMessage_ClientAdded(object sender, ClientAddedEventArgs e)
-        {
-            SetText(string.Format("Client ID registered: {0}", e.Sink.Name));
-            SetText(Environment.NewLine);
-        }
+		void remoteMessage_ClientAdded(object sender, ClientAddedEventArgs e)
+		{
+			SetText(string.Format("Client ID registered: {0}", e.Sink.Name));
+			SetText(Environment.NewLine);
+		}
 
-        void remoteMessage_MessageReceived(object sender, MessageReceivedEventArgs e)
-        {
-            SetText(string.Format("Message arrived: {0}", e.UserObject));
-            SetText(Environment.NewLine);
-        }
+		void remoteMessage_MessageReceived(object sender, MessageReceivedEventArgs e)
+		{
+			SetText(string.Format("Message arrived: {0}", e.UserObject));
+			SetText(Environment.NewLine);
+
+			// echo message to subscribed client
+			remoteMessage.DispatchEvent(e.Name, e.UserObject);
+		}
 
 		private void SetText(string text)
 		{
@@ -97,5 +115,7 @@ namespace Remoting.Server
 				tbLog.AppendText(text);
 			}
 		}
+
+		#endregion Methods
 	}
 }

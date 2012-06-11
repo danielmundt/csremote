@@ -23,21 +23,44 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+using Remoting.Service.Events;
+
 namespace Remoting.Service
 {
-	[Serializable]
-	public class ClientSink
+	public class ClientSink : MarshalByRefObject
 	{
-		private string name;
-        private EventCallback callback;
+		#region Fields
 
-		public ClientSink(string name, EventCallback callback)
+		private String name;
+
+		#endregion Fields
+
+		#region Constructors
+
+		public ClientSink(String name)
 		{
 			this.name = name;
-            this.callback = callback;
 		}
 
-		public string Name
+		#endregion Constructors
+
+		#region Events
+
+		public event EventHandler<EventDispatchedEventArgs> EventDispatched;
+
+		#endregion Events
+
+		#region Properties
+
+		public EventHandler<EventDispatchedEventArgs> EventHandler
+		{
+			get
+			{
+				return EventDispatched;
+			}
+		}
+
+		public String Name
 		{
 			get
 			{
@@ -45,13 +68,18 @@ namespace Remoting.Service
 			}
 		}
 
-        public EventCallback Callback
-        {
-            get
-            {
-                return callback;
-            }
-        }
+		#endregion Properties
+
+		#region Methods
+
+		public void DispatchEvent(EventDispatchedEventArgs e)
+		{
+			if (EventDispatched != null)
+			{
+				// asynchronous event dispatching
+				EventDispatched.BeginInvoke(this, e, null, null);
+			}
+		}
 
 		public override bool Equals(Object obj)
 		{
@@ -65,33 +93,25 @@ namespace Remoting.Service
 			{
 				return false;
 			}
-
-            return ((name == other.Name) && (callback == other.Callback));
+			// return true if the fields match:
+			return ((name == other.Name) && (EventHandler == other.EventHandler));
 		}
 
 		public bool Equals(ClientSink other)
 		{
-			// If parameter is null return false:
 			if ((object)other == null)
 			{
 				return false;
 			}
-
-			// Return true if the fields match:
-            return ((name == other.Name) && (callback == other.Callback));
+			// return true if the fields match
+			return ((name == other.Name) && (EventHandler == other.EventHandler));
 		}
 
 		public override int GetHashCode()
 		{
-			return (name.GetHashCode() ^ callback.GetHashCode());
+			return (name.GetHashCode() ^ EventHandler.GetHashCode());
 		}
 
-        public void PublishEvent(Object obj)
-        {
-            if (callback != null)
-            {
-                callback(obj);
-            }
-        }
+		#endregion Methods
 	}
 }

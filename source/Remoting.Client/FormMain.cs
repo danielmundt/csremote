@@ -36,14 +36,19 @@ using System.Threading;
 using System.Windows.Forms;
 
 using Remoting.Service;
+using Remoting.Service.Events;
 
 namespace Remoting.Client
 {
 	public partial class FormMain : Form
 	{
+		#region Fields
 
-        private IRemoteService remoteService;
-        delegate void SetTextCallback(string text);
+		private IRemoteService remoteService;
+
+		#endregion Fields
+
+		#region Constructors
 
 		public FormMain()
 		{
@@ -51,28 +56,51 @@ namespace Remoting.Client
 			InitializeClient();
 		}
 
+		#endregion Constructors
+
+		#region Delegates
+
+		delegate void SetTextCallback(string text);
+
+		#endregion Delegates
+
+		#region Methods
+
 		public void SendMessage(string clientId)
 		{
-			try
+			// try
 			{
-                if (remoteService == null)
-                {
-                    // create transparent proxy to server component
-                    remoteService = (IRemoteService)Activator.GetObject(
-                        typeof(IRemoteService), "tcp://localhost:9001/service.rem");
-                }
-                ClientSink clientSink = new ClientSink(clientId, eventProxy.OnEventSent);
-                remoteService.PublishMessage(clientSink, "Hello World");
-            }
-			catch (RemotingException ex)
+				if (remoteService == null)
+				{
+					// create transparent proxy to server component
+					remoteService = (IRemoteService)Activator.GetObject(
+						typeof(IRemoteService), "tcp://localhost:9001/service.rem");
+				}
+				ClientSink clientSink = new ClientSink(clientId);
+				clientSink.EventDispatched += new EventHandler<EventDispatchedEventArgs>(clientSink_EventDispatched);
+				remoteService.DispatchCall(clientSink, "Hello World");
+			}
+			/* catch (RemotingException ex)
 			{
 				MessageBox.Show(this, ex.Message, "Error");
-			}
+			} */
 		}
 
 		private void btnSend_Click(object sender, EventArgs e)
 		{
-            SendMessage(tbClientId.Text);
+			SendMessage(tbClientId.Text);
+		}
+
+		private void clientSink_EventDispatched(object sender, EventDispatchedEventArgs e)
+		{
+			SetText(string.Format("EventDispatched: {0}", (string)e.UserObject));
+			SetText(Environment.NewLine);
+		}
+
+		void eventProxy_EventSent(object obj)
+		{
+			SetText("MessageReceived: " + (string)obj);
+			SetText(Environment.NewLine);
 		}
 
 		private void FormMain_Load(object sender, EventArgs e)
@@ -80,34 +108,30 @@ namespace Remoting.Client
 			tbClientId.Text = Guid.NewGuid().ToString("N");
 		}
 
-        private EventProxy eventProxy;
-
 		private void InitializeClient()
 		{
-            // set channel properties
-            IDictionary props = new Hashtable();
-            props["port"] = 0;
-            props["name"] = "client";
-            // props["machineName"] = "localhost";
+			// set channel properties
+			IDictionary props = new Hashtable();
+			props["port"] = 0;
+			props["name"] = "client";
+			// props["machineName"] = "localhost";
 
-            // create and register the channel
-            TcpChannel clientChannel = new TcpChannel(props,
-                new BinaryClientFormatterSinkProvider(),
-                new BinaryServerFormatterSinkProvider());
-            ChannelServices.RegisterChannel(clientChannel, false);
+			BinaryServerFormatterSinkProvider sinkProvider = new BinaryServerFormatterSinkProvider();
+			sinkProvider.TypeFilterLevel = TypeFilterLevel.Full;
 
-            // create event proxy
-            eventProxy = new EventProxy();
-            eventProxy.EventSent += new EventCallback(eventProxy_EventSent);
- 		}
+			// create and register the channel
+			TcpChannel clientChannel = new TcpChannel(props,
+				new BinaryClientFormatterSinkProvider(), sinkProvider);
+			ChannelServices.RegisterChannel(clientChannel, false);
+		}
 
-        void eventProxy_EventSent(object obj)
-        {
-            SetText("MessageReceived: " + (string)obj);
-            SetText(Environment.NewLine);
-        }
+		void remoteService_ClientAdded(object sender, ClientAddedEventArgs e)
+		{
+			SetText(string.Format("Client ID registered: {0}", e.Sink.Name));
+			SetText(Environment.NewLine);
+		}
 
-    	private void SetText(string text)
+		private void SetText(string text)
 		{
 			// thread-safe call
 			if (tbLog.InvokeRequired)
@@ -120,5 +144,7 @@ namespace Remoting.Client
 				tbLog.AppendText(text);
 			}
 		}
+
+		#endregion Methods
 	}
 }

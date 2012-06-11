@@ -28,12 +28,47 @@ using Remoting.Service.Events;
 
 namespace Remoting.Server
 {
-    public class RemoteService : MarshalByRefObject, IRemoteService
+	public class RemoteService : MarshalByRefObject, IRemoteService
 	{
-        private List<ClientSink> clients = new List<ClientSink>();
+		#region Fields
 
-        public event EventHandler<ClientAddedEventArgs> ClientAdded;
-        public event EventHandler<MessageReceivedEventArgs> MessageReceived;
+		private List<ClientSink> sinks = new List<ClientSink>();
+
+		#endregion Fields
+
+		#region Events
+
+		public event EventHandler<ClientAddedEventArgs> ClientAdded;
+
+		public event EventHandler<MessageReceivedEventArgs> MessageReceived;
+
+		#endregion Events
+
+		#region Methods
+
+		// called from client to publish a messsage
+		public void DispatchCall(ClientSink sink, Object obj)
+		{
+			// register client and notify listeners
+			if (!sinks.Contains(sink))
+			{
+				sinks.Add(sink);
+				OnClientAdded(new ClientAddedEventArgs(sink));
+			}
+			OnMessageReceived(new MessageReceivedEventArgs(sink.Name, obj));
+		}
+
+		// called from service server to send client an event
+		public void DispatchEvent(String name, Object obj)
+		{
+			foreach (ClientSink sink in sinks)
+			{
+				if ((sink.Name == name) || (sink.Name == String.Empty))
+				{
+					sink.DispatchEvent(new EventDispatchedEventArgs(sink.Name, obj));
+				}
+			}
+		}
 
 		public override object InitializeLifetimeService()
 		{
@@ -41,48 +76,24 @@ namespace Remoting.Server
 			return null;
 		}
 
-		// called from client to publish a messsage
-        public void PublishMessage(ClientSink clientSink, Object obj)
-		{
-            // register client and notify listeners
-            if (!clients.Contains(clientSink))
-            {
-                clients.Add(clientSink);
-                OnClientAdded(new ClientAddedEventArgs(clientSink));
-            }
-            // OnMessageArrived(obj);
-            OnMessageReceived(new MessageReceivedEventArgs(obj));
-
-            // echo message to subscribed client
-            PublishEvent(clientSink.Name, obj);
-		}
-
-        // called from service server to send client an event
-        public void PublishEvent(string clientId, Object obj)
-        {
-            foreach (ClientSink clientSink in clients)
-            {
-                if ((clientSink.Name == clientId) || (clientSink.Name == string.Empty))
-                {
-                    clientSink.PublishEvent(obj);
-                }
-            }
-        }
-
-        private void OnClientAdded(ClientAddedEventArgs e)
+		private void OnClientAdded(ClientAddedEventArgs e)
 		{
 			if (ClientAdded != null)
 			{
-				ClientAdded(this, e);
+				// asynchronous event dispatching
+				ClientAdded.BeginInvoke(this, e, null, null);
 			}
 		}
 
-        private void OnMessageReceived(MessageReceivedEventArgs e)
-        {
-            if (MessageReceived != null)
-            {
-                MessageReceived(this, e);
-            }
-        }
+		private void OnMessageReceived(MessageReceivedEventArgs e)
+		{
+			if (MessageReceived != null)
+			{
+				// asynchronous event dispatching
+				MessageReceived.BeginInvoke(this, e, null, null);
+			}
+		}
+
+		#endregion Methods
 	}
 }

@@ -1,4 +1,4 @@
-﻿#region Header
+#region Header
 
 // Copyright (C) 2012 Daniel Schubert
 //
@@ -47,19 +47,19 @@ namespace Remoting.Service.Events
 
 		#region Properties
 
-		public String Sink
-		{
-			get
-			{
-				return sink;
-			}
-		}
-
 		public Object Data
 		{
 			get
 			{
 				return data;
+			}
+		}
+
+		public String Sink
+		{
+			get
+			{
+				return sink;
 			}
 		}
 

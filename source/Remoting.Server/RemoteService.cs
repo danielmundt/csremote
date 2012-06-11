@@ -21,14 +21,25 @@
 
 using System;
 using System.Collections.Generic;
-using System.Runtime.Remoting.Lifetime;
 using System.Text;
 
-namespace Remoting.Service
+using Remoting.Server.Events;
+using Remoting.Service;
+using Remoting.Service.Events;
+
+namespace Remoting.Server
 {
-	public class RemoteMessage : MarshalByRefObject
+	public class RemoteService : MarshalByRefObject, IRemoteService
 	{
+		#region Fields
+
+		private List<EventProxy> eventProxies = new List<EventProxy>();
+
+		#endregion Fields
+
 		#region Events
+
+		public event EventHandler<ClientAddedEventArgs> ClientAdded;
 
 		public event EventHandler<MessageReceivedEventArgs> MessageReceived;
 
@@ -36,27 +47,51 @@ namespace Remoting.Service
 
 		#region Methods
 
+		// called from client to publish a messsage
+		public void DispatchCall(EventProxy proxy, Object obj)
+		{
+			// register client and notify listeners
+			if (!eventProxies.Contains(proxy))
+			{
+				eventProxies.Add(proxy);
+				OnClientAdded(new ClientAddedEventArgs(proxy));
+			}
+			OnMessageReceived(new MessageReceivedEventArgs(proxy.Sink, obj));
+		}
+
+		// called from service server to send client an event
+		public void DispatchEvent(String sink, Object obj)
+		{
+			foreach (EventProxy proxy in eventProxies)
+			{
+				if ((proxy.Sink == sink) || (proxy.Sink == String.Empty))
+				{
+					proxy.DispatchEvent(new EventDispatchedEventArgs(proxy.Sink, obj));
+				}
+			}
+		}
+
 		public override object InitializeLifetimeService()
 		{
 			// indicate that this lease never expires
-            ILease lease = (ILease)base.InitializeLifetimeService();
-            if (lease.CurrentState == LeaseState.Initial)
-            {
-                lease.InitialLeaseTime = TimeSpan.FromMinutes(0);
-            }
-            return lease;
+			return null;
 		}
 
-		public void Send(object o)
+		private void OnClientAdded(ClientAddedEventArgs e)
 		{
-			OnMessageReceived(new MessageReceivedEventArgs(o));
+			if (ClientAdded != null)
+			{
+				// asynchronous event dispatching
+				ClientAdded.BeginInvoke(this, e, null, null);
+			}
 		}
 
 		private void OnMessageReceived(MessageReceivedEventArgs e)
 		{
 			if (MessageReceived != null)
 			{
-				MessageReceived(this, e);
+				// asynchronous event dispatching
+				MessageReceived.BeginInvoke(this, e, null, null);
 			}
 		}
 

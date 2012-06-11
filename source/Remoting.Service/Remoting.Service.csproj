@@ -8,8 +8,8 @@
     <ProjectGuid>{5018F0BB-8CFA-46B5-8A21-F9A1AB8FFD05}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Remoting.Interface</RootNamespace>
-    <AssemblyName>Remoting.Interface</AssemblyName>
+    <RootNamespace>Remoting.Service</RootNamespace>
+    <AssemblyName>Remoting.Service</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkSubset>
@@ -38,9 +38,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MessageReceivedEventArgs.cs" />
+    <Compile Include="Events\EventDispatchedEventArgs.cs" />
+    <Compile Include="EventProxy.cs" />
+    <Compile Include="IRemoteService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RemoteMessage.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

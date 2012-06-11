@@ -70,12 +70,6 @@ namespace Remoting.Client
 		{
 			try
 			{
-				if (remoteService == null)
-				{
-					// create transparent proxy to server component
-					remoteService = (IRemoteService)Activator.GetObject(
-						typeof(IRemoteService), "tcp://localhost:9001/service.rem");
-				}
 				EventProxy eventProxy = new EventProxy(proxyId);
 				eventProxy.EventDispatched += new EventHandler<EventDispatchedEventArgs>(eventProxy_EventDispatched);
 				remoteService.DispatchCall(eventProxy, "Hello World");
@@ -108,7 +102,6 @@ namespace Remoting.Client
 			IDictionary props = new Hashtable();
 			props["port"] = 0;
 			props["name"] = "client";
-			// props["machineName"] = "localhost";
 
 			BinaryServerFormatterSinkProvider sinkProvider = new BinaryServerFormatterSinkProvider();
 			sinkProvider.TypeFilterLevel = TypeFilterLevel.Full;
@@ -117,6 +110,10 @@ namespace Remoting.Client
 			TcpChannel clientChannel = new TcpChannel(props,
 				new BinaryClientFormatterSinkProvider(), sinkProvider);
 			ChannelServices.RegisterChannel(clientChannel, false);
+
+			// create transparent proxy to server component
+			remoteService = (IRemoteService)Activator.GetObject(
+				typeof(IRemoteService), "tcp://localhost:9001/service.rem");
 		}
 
 		private void SetText(string text)

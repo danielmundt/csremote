@@ -70,7 +70,6 @@ namespace Remoting.Server
 			IDictionary props = new Hashtable();
 			props["port"] = 9001;
 			props["name"] = "server";
-			// props["machineName"] = "localhost";
 
 			// create custom formatter
 			BinaryServerFormatterSinkProvider sinkProvider = new BinaryServerFormatterSinkProvider();

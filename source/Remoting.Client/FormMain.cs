@@ -66,9 +66,9 @@ namespace Remoting.Client
 
 		#region Methods
 
-		public void SendMessage(string clientId)
+		public void SendMessage(string proxyId)
 		{
-			// try
+			try
 			{
 				if (remoteService == null)
 				{
@@ -76,14 +76,14 @@ namespace Remoting.Client
 					remoteService = (IRemoteService)Activator.GetObject(
 						typeof(IRemoteService), "tcp://localhost:9001/service.rem");
 				}
-				ClientSink clientSink = new ClientSink(clientId);
-				clientSink.EventDispatched += new EventHandler<EventDispatchedEventArgs>(clientSink_EventDispatched);
-				remoteService.DispatchCall(clientSink, "Hello World");
+				EventProxy eventProxy = new EventProxy(proxyId);
+				eventProxy.EventDispatched += new EventHandler<EventDispatchedEventArgs>(eventProxy_EventDispatched);
+				remoteService.DispatchCall(eventProxy, "Hello World");
 			}
-			/* catch (RemotingException ex)
+			catch (RemotingException ex)
 			{
 				MessageBox.Show(this, ex.Message, "Error");
-			} */
+			}
 		}
 
 		private void btnSend_Click(object sender, EventArgs e)
@@ -91,15 +91,9 @@ namespace Remoting.Client
 			SendMessage(tbClientId.Text);
 		}
 
-		private void clientSink_EventDispatched(object sender, EventDispatchedEventArgs e)
+		private void eventProxy_EventDispatched(object sender, EventDispatchedEventArgs e)
 		{
 			SetText(string.Format("EventDispatched: {0}", (string)e.UserObject));
-			SetText(Environment.NewLine);
-		}
-
-		void eventProxy_EventSent(object obj)
-		{
-			SetText("MessageReceived: " + (string)obj);
 			SetText(Environment.NewLine);
 		}
 
@@ -123,12 +117,6 @@ namespace Remoting.Client
 			TcpChannel clientChannel = new TcpChannel(props,
 				new BinaryClientFormatterSinkProvider(), sinkProvider);
 			ChannelServices.RegisterChannel(clientChannel, false);
-		}
-
-		void remoteService_ClientAdded(object sender, ClientAddedEventArgs e)
-		{
-			SetText(string.Format("Client ID registered: {0}", e.Sink.Name));
-			SetText(Environment.NewLine);
 		}
 
 		private void SetText(string text)

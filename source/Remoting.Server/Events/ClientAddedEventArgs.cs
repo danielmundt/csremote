@@ -23,33 +23,35 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Remoting.Service.Events
+using Remoting.Service;
+
+namespace Remoting.Server.Events
 {
 	[Serializable]
 	public class ClientAddedEventArgs : EventArgs
 	{
 		#region Fields
 
-		private ClientSink sink;
+		private EventProxy proxy;
 
 		#endregion Fields
 
 		#region Constructors
 
-		public ClientAddedEventArgs(ClientSink sink)
+		public ClientAddedEventArgs(EventProxy proxy)
 		{
-			this.sink = sink;
+			this.proxy = proxy;
 		}
 
 		#endregion Constructors
 
 		#region Properties
 
-		public ClientSink Sink
+		public EventProxy Proxy
 		{
 			get
 			{
-				return sink;
+				return proxy;
 			}
 		}
 

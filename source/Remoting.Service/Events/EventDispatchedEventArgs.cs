@@ -9,16 +9,16 @@ namespace Remoting.Service.Events
 	{
 		#region Fields
 
-		private String name;
+		private String sink;
 		private Object userObject;
 
 		#endregion Fields
 
 		#region Constructors
 
-		public EventDispatchedEventArgs(String name, Object userObject)
+        public EventDispatchedEventArgs(String sink, Object userObject)
 		{
-			this.name = name;
+			this.sink = sink;
 			this.userObject = userObject;
 		}
 
@@ -26,11 +26,11 @@ namespace Remoting.Service.Events
 
 		#region Properties
 
-		public string Name
+        public String Sink
 		{
 			get
 			{
-				return name;
+				return sink;
 			}
 		}
 

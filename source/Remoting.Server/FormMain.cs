@@ -32,8 +32,9 @@ using System.Runtime.Serialization.Formatters;
 using System.Text;
 using System.Windows.Forms;
 
+using Remoting.Server;
+using Remoting.Server.Events;
 using Remoting.Service;
-using Remoting.Service.Events;
 
 namespace Remoting.Server
 {
@@ -89,7 +90,7 @@ namespace Remoting.Server
 
 		void remoteMessage_ClientAdded(object sender, ClientAddedEventArgs e)
 		{
-			SetText(string.Format("Client ID registered: {0}", e.Sink.Name));
+			SetText(string.Format("Client ID registered: {0}", e.Proxy.Sink));
 			SetText(Environment.NewLine);
 		}
 
@@ -99,7 +100,7 @@ namespace Remoting.Server
 			SetText(Environment.NewLine);
 
 			// echo message to subscribed client
-			remoteMessage.DispatchEvent(e.Name, e.UserObject);
+			remoteMessage.DispatchEvent(e.Sink, e.UserObject);
 		}
 
 		private void SetText(string text)

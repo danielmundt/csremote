@@ -1,4 +1,4 @@
-#region Header
+﻿#region Header
 
 // Copyright (C) 2012 Daniel Schubert
 //
@@ -23,95 +23,48 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using Remoting.Service.Events;
+using Remoting.Service;
 
-namespace Remoting.Service
+namespace Remoting.Server.Events
 {
-	public class ClientSink : MarshalByRefObject
+	[Serializable]
+	public class MessageReceivedEventArgs : EventArgs
 	{
 		#region Fields
 
-		private String name;
+		private String sink;
+		private Object userObject;
 
 		#endregion Fields
 
 		#region Constructors
 
-		public ClientSink(String name)
+        public MessageReceivedEventArgs(String sink, Object userObject)
 		{
-			this.name = name;
+			this.sink = sink;
+			this.userObject = userObject;
 		}
 
 		#endregion Constructors
 
-		#region Events
-
-		public event EventHandler<EventDispatchedEventArgs> EventDispatched;
-
-		#endregion Events
-
 		#region Properties
 
-		public EventHandler<EventDispatchedEventArgs> EventHandler
+        public String Sink
 		{
 			get
 			{
-				return EventDispatched;
+				return sink;
 			}
 		}
 
-		public String Name
+		public Object UserObject
 		{
 			get
 			{
-				return name;
+				return userObject;
 			}
 		}
 
 		#endregion Properties
-
-		#region Methods
-
-		public void DispatchEvent(EventDispatchedEventArgs e)
-		{
-			if (EventDispatched != null)
-			{
-				// asynchronous event dispatching
-				EventDispatched.BeginInvoke(this, e, null, null);
-			}
-		}
-
-		public override bool Equals(Object obj)
-		{
-			if (obj == null)
-			{
-				return false;
-			}
-
-			ClientSink other = obj as ClientSink;
-			if ((Object)other == null)
-			{
-				return false;
-			}
-			// return true if the fields match:
-			return ((name == other.Name) && (EventHandler == other.EventHandler));
-		}
-
-		public bool Equals(ClientSink other)
-		{
-			if ((object)other == null)
-			{
-				return false;
-			}
-			// return true if the fields match
-			return ((name == other.Name) && (EventHandler == other.EventHandler));
-		}
-
-		public override int GetHashCode()
-		{
-			return (name.GetHashCode() ^ EventHandler.GetHashCode());
-		}
-
-		#endregion Methods
 	}
 }

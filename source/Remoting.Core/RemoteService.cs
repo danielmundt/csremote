@@ -23,11 +23,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using Remoting.Server.Events;
+using Remoting.Core.Events;
 using Remoting.Service;
-using Remoting.Service.Events;
 
-namespace Remoting.Server
+namespace Remoting.Core
 {
 	public class RemoteService : MarshalByRefObject, IRemoteService
 	{
@@ -56,17 +55,17 @@ namespace Remoting.Server
 				eventProxies.Add(proxy);
 				OnClientAdded(new ClientAddedEventArgs(proxy));
 			}
-			OnMessageReceived(new MessageReceivedEventArgs(proxy.Sink, obj));
+			OnMessageReceived(new MessageReceivedEventArgs(proxy.Name, obj));
 		}
 
 		// called from service server to send client an event
-		public void DispatchEvent(String sink, Object obj)
+		public void DispatchEvent(String name, Object obj)
 		{
 			foreach (EventProxy proxy in eventProxies)
 			{
-				if ((proxy.Sink == sink) || (proxy.Sink == String.Empty))
+				if ((proxy.Name == name) || (proxy.Name == String.Empty))
 				{
-					proxy.DispatchEvent(new EventDispatchedEventArgs(proxy.Sink, obj));
+					proxy.DispatchEvent(new EventDispatchedEventArgs(proxy.Name, obj));
 				}
 			}
 		}

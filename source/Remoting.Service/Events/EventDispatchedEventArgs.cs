@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -16,7 +16,7 @@ namespace Remoting.Service.Events
 
 		#region Constructors
 
-        public EventDispatchedEventArgs(String sink, Object userObject)
+		public EventDispatchedEventArgs(String sink, Object userObject)
 		{
 			this.sink = sink;
 			this.userObject = userObject;
@@ -26,7 +26,7 @@ namespace Remoting.Service.Events
 
 		#region Properties
 
-        public String Sink
+		public String Sink
 		{
 			get
 			{

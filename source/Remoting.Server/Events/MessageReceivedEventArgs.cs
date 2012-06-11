@@ -1,4 +1,4 @@
-﻿#region Header
+#region Header
 
 // Copyright (C) 2012 Daniel Schubert
 //
@@ -39,7 +39,7 @@ namespace Remoting.Server.Events
 
 		#region Constructors
 
-        public MessageReceivedEventArgs(String sink, Object userObject)
+		public MessageReceivedEventArgs(String sink, Object userObject)
 		{
 			this.sink = sink;
 			this.userObject = userObject;
@@ -49,7 +49,7 @@ namespace Remoting.Server.Events
 
 		#region Properties
 
-        public String Sink
+		public String Sink
 		{
 			get
 			{

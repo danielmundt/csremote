@@ -31,15 +31,15 @@ namespace Remoting.Service
 	{
 		#region Fields
 
-        private String sink;
+		private String sink;
 
 		#endregion Fields
 
 		#region Constructors
 
-        public EventProxy(String sink)
+		public EventProxy(String sink)
 		{
-            this.sink = sink;
+			this.sink = sink;
 		}
 
 		#endregion Constructors
@@ -60,7 +60,7 @@ namespace Remoting.Service
 			}
 		}
 
-        public String Sink
+		public String Sink
 		{
 			get
 			{
@@ -94,7 +94,7 @@ namespace Remoting.Service
 				return false;
 			}
 			// return true if the fields match
-            return ((sink == other.Sink) && (EventHandler == other.EventHandler));
+			return ((sink == other.Sink) && (EventHandler == other.EventHandler));
 		}
 
 		public bool Equals(EventProxy other)
@@ -104,12 +104,18 @@ namespace Remoting.Service
 				return false;
 			}
 			// return true if the fields match
-            return ((sink == other.Sink) && (EventHandler == other.EventHandler));
+			return ((sink == other.Sink) && (EventHandler == other.EventHandler));
 		}
 
 		public override int GetHashCode()
 		{
-            return (sink.GetHashCode() ^ EventHandler.GetHashCode());
+			return (sink.GetHashCode() ^ EventHandler.GetHashCode());
+		}
+
+		public override object InitializeLifetimeService()
+		{
+			// indicate that this lease never expires
+			return null;
 		}
 
 		#endregion Methods

@@ -97,10 +97,10 @@ namespace Remoting.Server
 		void remoteMessage_MessageReceived(object sender, MessageReceivedEventArgs e)
 		{
 			SetText(string.Format("Message arrived: {0}{1}",
-				e.UserObject, Environment.NewLine));
+				e.Data, Environment.NewLine));
 
 			// echo message to subscribed client
-			remoteMessage.DispatchEvent(e.Sink, e.UserObject);
+			remoteMessage.DispatchEvent(e.Sink, e.Data);
 		}
 
 		private void SetText(string text)

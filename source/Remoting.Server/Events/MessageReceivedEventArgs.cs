@@ -1,4 +1,4 @@
-﻿#region Header
+#region Header
 
 // Copyright (C) 2012 Daniel Schubert
 //
@@ -32,14 +32,14 @@ namespace Remoting.Server.Events
 	{
 		#region Fields
 
-		private String sink;
 		private Object data;
+		private String sink;
 
 		#endregion Fields
 
 		#region Constructors
 
-        public MessageReceivedEventArgs(String sink, Object data)
+		public MessageReceivedEventArgs(String sink, Object data)
 		{
 			this.sink = sink;
 			this.data = data;
@@ -49,19 +49,19 @@ namespace Remoting.Server.Events
 
 		#region Properties
 
-        public String Sink
-		{
-			get
-			{
-				return sink;
-			}
-		}
-
 		public Object Data
 		{
 			get
 			{
 				return data;
+			}
+		}
+
+		public String Sink
+		{
+			get
+			{
+				return sink;
 			}
 		}
 

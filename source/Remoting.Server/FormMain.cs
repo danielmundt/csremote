@@ -89,14 +89,14 @@ namespace Remoting.Server
 
 		void remoteMessage_ClientAdded(object sender, ClientAddedEventArgs e)
 		{
-            SetText(string.Format("Client ID registered: {0}{1}",
-                e.Proxy.Sink, Environment.NewLine));
+			SetText(string.Format("Client ID registered: {0}{1}",
+				e.Proxy.Sink, Environment.NewLine));
 		}
 
 		void remoteMessage_MessageReceived(object sender, MessageReceivedEventArgs e)
 		{
-            SetText(string.Format("Message arrived: {0}{1}",
-                e.Data, Environment.NewLine));
+			SetText(string.Format("Message arrived: {0}{1}",
+				e.Data, Environment.NewLine));
 
 			// echo message to subscribed client
 			remoteMessage.DispatchEvent(e.Sink, e.Data);

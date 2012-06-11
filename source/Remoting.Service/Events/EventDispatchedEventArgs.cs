@@ -9,14 +9,14 @@ namespace Remoting.Service.Events
 	{
 		#region Fields
 
-		private String sink;
 		private Object data;
+		private String sink;
 
 		#endregion Fields
 
 		#region Constructors
 
-        public EventDispatchedEventArgs(String sink, Object data)
+		public EventDispatchedEventArgs(String sink, Object data)
 		{
 			this.sink = sink;
 			this.data = data;
@@ -26,7 +26,7 @@ namespace Remoting.Service.Events
 
 		#region Properties
 
-        public String Sink
+		public String Sink
 		{
 			get
 			{
@@ -34,7 +34,7 @@ namespace Remoting.Service.Events
 			}
 		}
 
-		public Object UserObject
+		public Object Data
 		{
 			get
 			{

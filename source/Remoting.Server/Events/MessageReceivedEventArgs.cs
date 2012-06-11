@@ -33,16 +33,16 @@ namespace Remoting.Server.Events
 		#region Fields
 
 		private String sink;
-		private Object userObject;
+		private Object data;
 
 		#endregion Fields
 
 		#region Constructors
 
-        public MessageReceivedEventArgs(String sink, Object userObject)
+        public MessageReceivedEventArgs(String sink, Object data)
 		{
 			this.sink = sink;
-			this.userObject = userObject;
+			this.data = data;
 		}
 
 		#endregion Constructors
@@ -57,11 +57,11 @@ namespace Remoting.Server.Events
 			}
 		}
 
-		public Object UserObject
+		public Object Data
 		{
 			get
 			{
-				return userObject;
+				return data;
 			}
 		}
 

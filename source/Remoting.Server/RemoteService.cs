@@ -48,7 +48,7 @@ namespace Remoting.Server
 		#region Methods
 
 		// called from client to publish a messsage
-		public void DispatchCall(EventProxy proxy, Object obj)
+		public void DispatchCall(EventProxy proxy, Object data)
 		{
 			// register client and notify listeners
 			if (!eventProxies.Contains(proxy))
@@ -56,17 +56,17 @@ namespace Remoting.Server
 				eventProxies.Add(proxy);
 				OnClientAdded(new ClientAddedEventArgs(proxy));
 			}
-			OnMessageReceived(new MessageReceivedEventArgs(proxy.Sink, obj));
+			OnMessageReceived(new MessageReceivedEventArgs(proxy.Sink, data));
 		}
 
 		// called from service server to send client an event
-		public void DispatchEvent(String sink, Object obj)
+		public void DispatchEvent(String sink, Object data)
 		{
 			foreach (EventProxy proxy in eventProxies)
 			{
 				if ((proxy.Sink == sink) || (proxy.Sink == String.Empty))
 				{
-					proxy.DispatchEvent(new EventDispatchedEventArgs(proxy.Sink, obj));
+					proxy.DispatchEvent(new EventDispatchedEventArgs(proxy.Sink, data));
 				}
 			}
 		}

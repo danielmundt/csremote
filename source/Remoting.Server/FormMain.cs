@@ -70,7 +70,6 @@ namespace Remoting.Server
 			IDictionary props = new Hashtable();
 			props["port"] = 9001;
 			props["name"] = "server";
-			// props["machineName"] = "localhost";
 
 			// create custom formatter
 			BinaryServerFormatterSinkProvider sinkProvider = new BinaryServerFormatterSinkProvider();
@@ -97,10 +96,10 @@ namespace Remoting.Server
 		void remoteMessage_MessageReceived(object sender, MessageReceivedEventArgs e)
 		{
             SetText(string.Format("Message arrived: {0}{1}",
-                e.UserObject, Environment.NewLine));
+                e.Data, Environment.NewLine));
 
 			// echo message to subscribed client
-			remoteMessage.DispatchEvent(e.Sink, e.UserObject);
+			remoteMessage.DispatchEvent(e.Sink, e.Data);
 		}
 
 		private void SetText(string text)

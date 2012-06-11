@@ -108,7 +108,6 @@ namespace Remoting.Client
 			IDictionary props = new Hashtable();
 			props["port"] = 0;
 			props["name"] = "client";
-			// props["machineName"] = "localhost";
 
 			BinaryServerFormatterSinkProvider sinkProvider = new BinaryServerFormatterSinkProvider();
 			sinkProvider.TypeFilterLevel = TypeFilterLevel.Full;

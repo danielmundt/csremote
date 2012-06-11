@@ -29,9 +29,9 @@ namespace Remoting.Service
 	{
 		#region Methods
 
-		void DispatchCall(EventProxy proxy, Object obj);
+		void DispatchCall(EventProxy proxy, Object data);
 
-		void DispatchEvent(String sink, Object obj);
+		void DispatchEvent(String sink, Object data);
 
 		#endregion Methods
 	}

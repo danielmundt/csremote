@@ -21,6 +21,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.Remoting.Lifetime;
 using System.Text;
 
 namespace Remoting.Service
@@ -38,7 +39,12 @@ namespace Remoting.Service
 		public override object InitializeLifetimeService()
 		{
 			// indicate that this lease never expires
-			return null;
+            ILease lease = (ILease)base.InitializeLifetimeService();
+            if (lease.CurrentState == LeaseState.Initial)
+            {
+                lease.InitialLeaseTime = TimeSpan.FromMinutes(0);
+            }
+            return lease;
 		}
 
 		public void Send(object o)

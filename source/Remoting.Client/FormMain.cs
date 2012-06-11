@@ -93,8 +93,8 @@ namespace Remoting.Client
 
 		private void eventProxy_EventDispatched(object sender, EventDispatchedEventArgs e)
 		{
-			SetText(string.Format("EventDispatched: {0}", (string)e.UserObject));
-			SetText(Environment.NewLine);
+            SetText(string.Format("EventDispatched: {0}{1}",
+                (string)e.UserObject, Environment.NewLine));
 		}
 
 		private void FormMain_Load(object sender, EventArgs e)

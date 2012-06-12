@@ -61,7 +61,7 @@ namespace Remoting.Client
 
 		#region Methods
 
-		public void SendMessage()
+		private void DispatchCall()
 		{
 			try
 			{
@@ -77,7 +77,7 @@ namespace Remoting.Client
 
 		private void btnSend_Click(object sender, EventArgs e)
 		{
-			SendMessage();
+			DispatchCall();
 		}
 
 		private void FormMain_Load(object sender, EventArgs e)

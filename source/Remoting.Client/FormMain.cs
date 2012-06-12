@@ -65,9 +65,9 @@ namespace Remoting.Client
 		{
 			try
 			{
-				EventProxy eventProxy = new EventProxy(tbClientId.Text);
-				eventProxy.EventDispatched += new EventHandler<EventDispatchedEventArgs>(eventProxy_EventDispatched);
-				service.DispatchCall(eventProxy, "Hello World");
+				EventProxy proxy = new EventProxy(tbClientId.Text);
+				proxy.EventDispatched += new EventHandler<EventDispatchedEventArgs>(proxy_EventDispatched);
+				service.DispatchCall(proxy, "Hello World");
 			}
 			catch (RemotingException ex)
 			{
@@ -78,12 +78,6 @@ namespace Remoting.Client
 		private void btnSend_Click(object sender, EventArgs e)
 		{
 			SendMessage();
-		}
-
-		private void eventProxy_EventDispatched(object sender, EventDispatchedEventArgs e)
-		{
-			SetText(string.Format("EventDispatched: {0}{1}",
-				(string)e.Data, Environment.NewLine));
 		}
 
 		private void FormMain_Load(object sender, EventArgs e)
@@ -99,6 +93,12 @@ namespace Remoting.Client
 			{
 				service = channel.Initialize();
 			}
+		}
+
+		private void proxy_EventDispatched(object sender, EventDispatchedEventArgs e)
+		{
+			SetText(string.Format("EventDispatched: {0}{1}",
+				(string)e.Data, Environment.NewLine));
 		}
 
 		private void SetText(string text)

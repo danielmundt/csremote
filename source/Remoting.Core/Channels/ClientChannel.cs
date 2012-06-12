@@ -28,9 +28,9 @@ using System.Runtime.Remoting.Channels.Tcp;
 using System.Runtime.Serialization.Formatters;
 using System.Text;
 
-namespace Remoting.Core
+namespace Remoting.Core.Channels
 {
-	public class ServerChannel : IChannel
+	public class ClientChannel : IChannel
 	{
 		#region Methods
 
@@ -38,31 +38,20 @@ namespace Remoting.Core
 		{
 			// set channel properties
 			IDictionary props = new Hashtable();
-			props["port"] = 9001;
-			props["name"] = "server";
+			props["port"] = 0;
+			props["name"] = "client";
 
-			// create custom formatter
-			BinaryServerFormatterSinkProvider provider = new BinaryServerFormatterSinkProvider();
-			provider.TypeFilterLevel = TypeFilterLevel.Full;
+			BinaryServerFormatterSinkProvider sinkProvider = new BinaryServerFormatterSinkProvider();
+			sinkProvider.TypeFilterLevel = TypeFilterLevel.Full;
 
-			// create and register the server channel
-			TcpServerChannel serverChannel = new TcpServerChannel(props, provider);
-			ChannelServices.RegisterChannel(serverChannel, false);
+			// create and register the channel
+			TcpChannel clientChannel = new TcpChannel(props,
+				new BinaryClientFormatterSinkProvider(), sinkProvider);
+			ChannelServices.RegisterChannel(clientChannel, false);
 
-			return new RemoteService();
-		}
-
-		public void RegisterService(RemoteService service)
-		{
-			// publish a specific object instance
-			ObjRef objRef = RemotingServices.Marshal(service, "service.rem");
-			Console.WriteLine("An instance of RemoteService type is published at {0}.", objRef.URI);
-		}
-
-		public void UnregisterService(RemoteService service)
-		{
-			// unpublish a specific object instance
-			RemotingServices.Disconnect(service);
+			// create transparent proxy to server component
+			return (IRemoteService)Activator.GetObject(
+				typeof(IRemoteService), "tcp://localhost:9001/service.rem");
 		}
 
 		#endregion Methods

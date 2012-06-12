@@ -30,6 +30,7 @@ using System.Threading;
 using System.Windows.Forms;
 
 using Remoting.Core;
+using Remoting.Core.Channels;
 using Remoting.Core.Events;
 
 namespace Remoting.Client

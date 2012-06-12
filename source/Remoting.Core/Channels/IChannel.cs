@@ -25,7 +25,7 @@ using System.Text;
 
 using Remoting.Core;
 
-namespace Remoting.Core
+namespace Remoting.Core.Channels
 {
 	public interface IChannel
 	{

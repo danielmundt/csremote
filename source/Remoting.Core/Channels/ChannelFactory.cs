@@ -23,7 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Remoting.Core
+namespace Remoting.Core.Channels
 {
 	public class ChannelFactory
 	{

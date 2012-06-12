@@ -20,23 +20,17 @@
 #endregion Header
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Runtime.Remoting;
-using System.Runtime.Remoting.Channels;
-using System.Runtime.Remoting.Channels.Tcp;
-using System.Runtime.Remoting.Lifetime;
-using System.Runtime.Remoting.Messaging;
-using System.Runtime.Serialization.Formatters;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 
-using Remoting.Service;
-using Remoting.Service.Events;
+using Remoting.Core;
+using Remoting.Core.Events;
 
 namespace Remoting.Client
 {
@@ -44,7 +38,7 @@ namespace Remoting.Client
 	{
 		#region Fields
 
-		private IRemoteService remoteService;
+		private IRemoteService service;
 
 		#endregion Fields
 
@@ -66,13 +60,13 @@ namespace Remoting.Client
 
 		#region Methods
 
-		public void SendMessage(string proxyId)
+		public void SendMessage()
 		{
 			try
 			{
-				EventProxy eventProxy = new EventProxy(proxyId);
+				EventProxy eventProxy = new EventProxy(tbClientId.Text);
 				eventProxy.EventDispatched += new EventHandler<EventDispatchedEventArgs>(eventProxy_EventDispatched);
-				remoteService.DispatchCall(eventProxy, "Hello World");
+				service.DispatchCall(eventProxy, "Hello World");
 			}
 			catch (RemotingException ex)
 			{
@@ -82,7 +76,7 @@ namespace Remoting.Client
 
 		private void btnSend_Click(object sender, EventArgs e)
 		{
-			SendMessage(tbClientId.Text);
+			SendMessage();
 		}
 
 		private void eventProxy_EventDispatched(object sender, EventDispatchedEventArgs e)
@@ -98,22 +92,12 @@ namespace Remoting.Client
 
 		private void InitializeClient()
 		{
-			// set channel properties
-			IDictionary props = new Hashtable();
-			props["port"] = 0;
-			props["name"] = "client";
-
-			BinaryServerFormatterSinkProvider sinkProvider = new BinaryServerFormatterSinkProvider();
-			sinkProvider.TypeFilterLevel = TypeFilterLevel.Full;
-
-			// create and register the channel
-			TcpChannel clientChannel = new TcpChannel(props,
-				new BinaryClientFormatterSinkProvider(), sinkProvider);
-			ChannelServices.RegisterChannel(clientChannel, false);
-
-			// create transparent proxy to server component
-			remoteService = (IRemoteService)Activator.GetObject(
-				typeof(IRemoteService), "tcp://localhost:9001/service.rem");
+			ClientChannel channel = (ClientChannel)ChannelFactory.GetChannel(
+				ChannelFactory.Type.Client);
+			if (channel != null)
+			{
+				service = channel.Initialize();
+			}
 		}
 
 		private void SetText(string text)

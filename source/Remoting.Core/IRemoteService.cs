@@ -23,38 +23,16 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using Remoting.Service;
-
-namespace Remoting.Server.Events
+namespace Remoting.Core
 {
-	[Serializable]
-	public class ClientAddedEventArgs : EventArgs
+	public interface IRemoteService
 	{
-		#region Fields
+		#region Methods
 
-		private EventProxy proxy;
+		void DispatchCall(EventProxy proxy, Object data);
 
-		#endregion Fields
+		void DispatchEvent(String sink, Object data);
 
-		#region Constructors
-
-		public ClientAddedEventArgs(EventProxy proxy)
-		{
-			this.proxy = proxy;
-		}
-
-		#endregion Constructors
-
-		#region Properties
-
-		public EventProxy Proxy
-		{
-			get
-			{
-				return proxy;
-			}
-		}
-
-		#endregion Properties
+		#endregion Methods
 	}
 }

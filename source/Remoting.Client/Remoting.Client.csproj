@@ -74,9 +74,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Remoting.Service\Remoting.Service.csproj">
-      <Project>{5018F0BB-8CFA-46B5-8A21-F9A1AB8FFD05}</Project>
-      <Name>Remoting.Service</Name>
+    <ProjectReference Include="..\Remoting.Core\Remoting.Core.csproj">
+      <Project>{580ECBE4-3F2F-4D83-9166-F5BB375480FB}</Project>
+      <Name>Remoting.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

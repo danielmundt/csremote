@@ -23,11 +23,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using Remoting.Server.Events;
-using Remoting.Service;
-using Remoting.Service.Events;
+using Remoting.Core.Events;
 
-namespace Remoting.Server
+namespace Remoting.Core
 {
 	public class RemoteService : MarshalByRefObject, IRemoteService
 	{
@@ -59,7 +57,7 @@ namespace Remoting.Server
 			OnMessageReceived(new MessageReceivedEventArgs(proxy.Sink, data));
 		}
 
-		// called from service server to send client an event
+		// called from server/client to send client an event
 		public void DispatchEvent(String sink, Object data)
 		{
 			foreach (EventProxy proxy in eventProxies)

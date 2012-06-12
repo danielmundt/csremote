@@ -23,9 +23,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using Remoting.Service.Events;
+using Remoting.Core.Events;
 
-namespace Remoting.Service
+namespace Remoting.Core
 {
 	public class EventProxy : MarshalByRefObject
 	{

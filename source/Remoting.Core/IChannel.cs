@@ -23,15 +23,15 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Remoting.Service
+using Remoting.Core;
+
+namespace Remoting.Core
 {
-	public interface IRemoteService
+	public interface IChannel
 	{
 		#region Methods
 
-		void DispatchCall(EventProxy proxy, Object data);
-
-		void DispatchEvent(String sink, Object data);
+		IRemoteService Initialize();
 
 		#endregion Methods
 	}

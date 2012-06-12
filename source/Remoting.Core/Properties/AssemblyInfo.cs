@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Remoting.Service")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Remoting.Core")]
+[assembly: AssemblyDescription(".Net Remoting Service Core")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Remoting.Service")]
-[assembly: AssemblyCopyright("Copyright © 2012")]
+[assembly: AssemblyProduct("Remoting.Core")]
+[assembly: AssemblyCopyright("Copyright © 2012 Daniel Schubert")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("829f0f63-0840-4081-8316-0717712185b5")]
+[assembly: Guid("5252ee1b-a881-4876-ae17-dedaf068b511")]
 
 // Version information for an assembly consists of the following four values:
 //

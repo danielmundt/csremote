@@ -23,7 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Remoting.Service.Events
+namespace Remoting.Core.Events
 {
 	[Serializable]
 	public class EventDispatchedEventArgs : EventArgs

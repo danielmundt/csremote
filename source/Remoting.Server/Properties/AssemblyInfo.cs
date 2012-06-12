@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Remoting.Server")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription(".NET Remoting Core Framework Demo")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Remoting.Server")]
-[assembly: AssemblyCopyright("Copyright © 2012")]
+[assembly: AssemblyCopyright("Copyright © 2012 Daniel Schubert")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

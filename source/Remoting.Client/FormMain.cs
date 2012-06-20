@@ -61,6 +61,11 @@ namespace Remoting.Client
 
 		#region Methods
 
+		private void btnSend_Click(object sender, EventArgs e)
+		{
+			DispatchCall();
+		}
+
 		private void DispatchCall()
 		{
 			try
@@ -73,11 +78,6 @@ namespace Remoting.Client
 			{
 				MessageBox.Show(this, ex.Message, "Error");
 			}
-		}
-
-		private void btnSend_Click(object sender, EventArgs e)
-		{
-			DispatchCall();
 		}
 
 		private void FormMain_Load(object sender, EventArgs e)

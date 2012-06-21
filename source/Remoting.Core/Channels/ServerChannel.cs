@@ -1,4 +1,4 @@
-﻿#region Header
+#region Header
 
 // Copyright (C) 2012 Daniel Schubert
 //
@@ -38,8 +38,9 @@ namespace Remoting.Core.Channels
 		{
 			// set channel properties
 			IDictionary props = new Hashtable();
-			props["port"] = 9001;
+			props["port"] = 9000;
 			props["name"] = "server";
+			// props["timeout"] = 5000;
 
 			// create custom formatter
 			BinaryServerFormatterSinkProvider provider = new BinaryServerFormatterSinkProvider();

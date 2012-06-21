@@ -21,6 +21,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Net.Sockets;
 using System.Runtime.Remoting;
 using System.Text;
 
@@ -33,7 +34,7 @@ namespace Remoting.Core
 		#region Fields
 
 		private bool disposed = false;
-		private List<EventProxy> eventProxies = new List<EventProxy>();
+		private List<EventProxy> proxies = new List<EventProxy>();
 
 		#endregion Fields
 
@@ -68,23 +69,35 @@ namespace Remoting.Core
 		// called from client to publish a messsage
 		public void DispatchCall(EventProxy proxy, Object data)
 		{
-			// register client and notify listeners
-			if (!eventProxies.Contains(proxy))
+			lock (this)
 			{
-				eventProxies.Add(proxy);
-				OnClientAdded(new ClientAddedEventArgs(proxy));
+				if (FindSink(proxy.Sink) == null)
+				{
+					proxies.Add(proxy);
+					OnClientAdded(new ClientAddedEventArgs(proxy));
+				}
+				OnMessageReceived(new MessageReceivedEventArgs(proxy.Sink, data));
 			}
-			OnMessageReceived(new MessageReceivedEventArgs(proxy.Sink, data));
 		}
 
 		// called from server/client to send client an event
 		public void DispatchEvent(String sink, Object data)
 		{
-			foreach (EventProxy proxy in eventProxies)
+			lock (this)
 			{
-				if ((proxy.Sink == sink) || (proxy.Sink == String.Empty))
+				EventProxy proxy = FindSink(sink);
+				if (proxy != null)
 				{
+					Console.WriteLine("Sink: {0}", proxy.Sink);
 					proxy.DispatchEvent(new EventDispatchedEventArgs(proxy.Sink, data));
+				}
+				else
+				{
+					Console.WriteLine("Sink is null!");
+					foreach (EventProxy ep in proxies)
+					{
+						Console.WriteLine("EP: {0}", ep.Sink);
+					}
 				}
 			}
 		}
@@ -115,10 +128,30 @@ namespace Remoting.Core
 		private void Disconnect()
 		{
 			RemotingServices.Disconnect(this);
-			foreach (var tmp in NestedMarshalByRefObjects)
+			foreach (MarshalByRefObject byRefObject in NestedMarshalByRefObjects)
 			{
-				RemotingServices.Disconnect(tmp);
+				RemotingServices.Disconnect(byRefObject);
 			}
+		}
+
+		private EventProxy FindSink(string sink)
+		{
+			for (int i = 0; i < proxies.Count; i++)
+			{
+				try
+				{
+					EventProxy proxy = proxies[i];
+					if (proxy.Sink == sink)
+					{
+						return proxy;
+					}
+				}
+				catch (SocketException)
+				{
+					proxies.RemoveAt(i--);
+				}
+			}
+			return null;
 		}
 
 		private void OnClientAdded(ClientAddedEventArgs e)
@@ -132,10 +165,13 @@ namespace Remoting.Core
 
 		private void OnMessageReceived(MessageReceivedEventArgs e)
 		{
-			if (MessageReceived != null)
+			lock (this)
 			{
-				// asynchronous event dispatching
-				MessageReceived.BeginInvoke(this, e, null, null);
+				if (MessageReceived != null)
+				{
+					// asynchronous event dispatching
+					MessageReceived.BeginInvoke(this, e, null, null);
+				}
 			}
 		}
 

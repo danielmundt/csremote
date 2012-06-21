@@ -70,7 +70,7 @@ namespace Remoting.Client
 		{
 			try
 			{
-				EventProxy proxy = new EventProxy(tbClientId.Text);
+				EventProxy proxy = new EventProxy(tbClientId.Text.Substring(0, 3));
 				proxy.EventDispatched += new EventHandler<EventDispatchedEventArgs>(proxy_EventDispatched);
 				service.DispatchCall(proxy, "Hello World");
 			}

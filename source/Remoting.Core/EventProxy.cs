@@ -136,6 +136,11 @@ namespace Remoting.Core
 			return null;
 		}
 
+		public EventProxy ShallowCopy()
+		{
+			return (MemberwiseClone(false) as EventProxy);
+		}
+
 		protected virtual void Dispose(bool disposing)
 		{
 			if (disposed)
@@ -150,9 +155,9 @@ namespace Remoting.Core
 		private void Disconnect()
 		{
 			RemotingServices.Disconnect(this);
-			foreach (var tmp in NestedMarshalByRefObjects)
+			foreach (MarshalByRefObject byRefObject in NestedMarshalByRefObjects)
 			{
-				RemotingServices.Disconnect(tmp);
+				RemotingServices.Disconnect(byRefObject);
 			}
 		}
 

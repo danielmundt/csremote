@@ -1,4 +1,4 @@
-﻿#region Header
+#region Header
 
 // Copyright (C) 2012 Daniel Schubert
 //
@@ -40,6 +40,7 @@ namespace Remoting.Core.Channels
 			IDictionary props = new Hashtable();
 			props["port"] = 0;
 			props["name"] = "client";
+			// props["timeout"] = 5000;
 
 			BinaryServerFormatterSinkProvider sinkProvider = new BinaryServerFormatterSinkProvider();
 			sinkProvider.TypeFilterLevel = TypeFilterLevel.Full;
@@ -51,7 +52,7 @@ namespace Remoting.Core.Channels
 
 			// create transparent proxy to server component
 			return (IRemoteService)Activator.GetObject(
-				typeof(IRemoteService), "tcp://localhost:9001/service.rem");
+				typeof(IRemoteService), "tcp://localhost:9000/service.rem");
 		}
 
 		#endregion Methods

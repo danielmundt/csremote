@@ -26,125 +26,166 @@ using System.Runtime.Remoting;
 using System.Text;
 
 using Remoting.Core.Events;
+using Remoting.Core.Exceptions;
 
 namespace Remoting.Core
 {
-	public class RemoteService : MarshalByRefObject, IRemoteService, IDisposable
-	{
-		#region Fields
+    public class RemoteService : MarshalByRefObject, IRemoteService, IDisposable
+    {
+        #region Fields
 
-		private bool disposed = false;
-		private Dictionary<string, EventProxy> proxies = new Dictionary<string, EventProxy>();
+        private bool disposed = false;
+        private Dictionary<string, EventProxy> proxies = new Dictionary<string, EventProxy>();
 
-		#endregion Fields
+        #endregion Fields
 
-		#region Constructors
+        #region Constructors
 
-		~RemoteService()
-		{
-			Dispose(false);
-		}
+        ~RemoteService()
+        {
+            Dispose(false);
+        }
 
-		#endregion Constructors
+        #endregion Constructors
 
-		#region Events
+        #region Events
 
-		public event EventHandler<ClientAddedEventArgs> ClientAdded;
+        public event EventHandler<ClientAddedEventArgs> ClientAdded;
 
-		public event EventHandler<MessageReceivedEventArgs> MessageReceived;
+        public event EventHandler<MessageReceivedEventArgs> MessageReceived;
 
-		#endregion Events
+        #endregion Events
 
-		#region Properties
+        #region Properties
 
-		protected virtual IEnumerable<MarshalByRefObject> NestedMarshalByRefObjects
-		{
-			get { yield break; }
-		}
+        protected virtual IEnumerable<MarshalByRefObject> NestedMarshalByRefObjects
+        {
+            get { yield break; }
+        }
 
-		#endregion Properties
+        #endregion Properties
 
-		#region Methods
+        #region Methods
 
-		// called from client to publish a messsage
-		public void DispatchCall(EventProxy proxy, Object data)
-		{
-			lock (this)
-			{
-				if (!proxies.ContainsKey(proxy.Sink))
-				{
-					proxies.Add(proxy.Sink, proxy);
-					OnClientAdded(new ClientAddedEventArgs(proxy));
-				}
-				OnMessageReceived(new MessageReceivedEventArgs(proxy.Sink, data));
-			}
-		}
+        private void RemoveDanglingRemoteObjects()
+        {
+            lock (this)
+            {
+                List<string> keys = new List<string>();
 
-		// called from server/client to send client an event
-		public void DispatchEvent(String sink, Object data)
-		{
-			lock (this)
-			{
-				if (proxies.ContainsKey(sink))
-				{
-					proxies[sink].DispatchEvent(new EventDispatchedEventArgs(sink, data));
-				}
-			}
-		}
+                // find keys to delete
+                foreach (string key in proxies.Keys)
+                {
+                    try
+                    {
+                        // dummy read on proxy object to trigger exception
+                        string sink = proxies[key].Sink;
+                    }
+                    catch (SocketException)
+                    {
+                        keys.Add(key);
+                    }
+                }
+                // then modify dictionary
+                foreach (string key in keys)
+                {
+                    Console.WriteLine("Removed key: {0}", key);
+                    proxies.Remove(key);
+                }
+            }
+        }
 
-		public void Dispose()
-		{
-			GC.SuppressFinalize(this);
-			Dispose(true);
-		}
+        // called from client to publish a messsage
+        public void DispatchCall(EventProxy proxy, Object data)
+        {
+            lock (this)
+            {
+                /* if (!proxies.ContainsKey(proxy.Sink))
+                {
+                    OnClientAdded(new ClientAddedEventArgs(proxy.Sink));
+                } */
+                proxies[proxy.Sink] = proxy;
+                OnMessageReceived(new MessageReceivedEventArgs(proxy.Sink, data));
+            }
+        }
 
-		public override sealed object InitializeLifetimeService()
-		{
-			// indicate that this lease never expires
-			return null;
-		}
+        // called from server/client to send client an event
+        public void DispatchEvent(String sink, Object data)
+        {
+            lock (this)
+            {
+                try
+                {
+                    if (proxies.ContainsKey(sink))
+                    {
+                        proxies[sink].DispatchEvent(new EventDispatchedEventArgs(sink, data));
+                    }
+                    else
+                    {
+                        throw new SinkNotFoundException();
+                    }
+                }
+                catch (SocketException)
+                {
+                    proxies.Remove(sink);
+                    throw;
+                }
+            }
+        }
 
-		protected virtual void Dispose(bool disposing)
-		{
-			if (disposed)
-			{
-				return;
-			}
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
+            Dispose(true);
+        }
 
-			Disconnect();
-			disposed = true;
-		}
+        public override sealed object InitializeLifetimeService()
+        {
+            // indicate that this lease never expires
+            return null;
+        }
 
-		private void Disconnect()
-		{
-			RemotingServices.Disconnect(this);
-			foreach (MarshalByRefObject byRefObject in NestedMarshalByRefObjects)
-			{
-				RemotingServices.Disconnect(byRefObject);
-			}
-		}
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed)
+            {
+                return;
+            }
 
-		private void OnClientAdded(ClientAddedEventArgs e)
-		{
-			if (ClientAdded != null)
-			{
-				// asynchronous event dispatching
-				ClientAdded.BeginInvoke(this, e, null, null);
-			}
-		}
+            Disconnect();
+            disposed = true;
+        }
 
-		private void OnMessageReceived(MessageReceivedEventArgs e)
-		{
-			lock (this)
-			{
-				if (MessageReceived != null)
-				{
-					// asynchronous event dispatching
-					MessageReceived.BeginInvoke(this, e, null, null);
-				}
-			}
-		}
+        private void Disconnect()
+        {
+            RemotingServices.Disconnect(this);
+            foreach (MarshalByRefObject byRefObject in NestedMarshalByRefObjects)
+            {
+                RemotingServices.Disconnect(byRefObject);
+            }
+        }
 
-		#endregion Methods
-	}
+        private void OnClientAdded(ClientAddedEventArgs e)
+        {
+            if (ClientAdded != null)
+            {
+                // asynchronous event dispatching
+                ClientAdded.BeginInvoke(this, e, null, null);
+            }
+        }
+
+        private void OnMessageReceived(MessageReceivedEventArgs e)
+        {
+            lock (this)
+            {
+                if (MessageReceived != null)
+                {
+                    // asynchronous event dispatching
+                    MessageReceived.BeginInvoke(this, e, null, null);
+                }
+            }
+        }
+
+        #endregion Methods
+    }
 }

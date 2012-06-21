@@ -32,26 +32,26 @@ namespace Remoting.Core.Events
 	{
 		#region Fields
 
-		private EventProxy proxy;
+        private string sink;
 
 		#endregion Fields
 
 		#region Constructors
 
-		public ClientAddedEventArgs(EventProxy proxy)
+		public ClientAddedEventArgs(string sink)
 		{
-			this.proxy = proxy;
+            this.sink = sink;
 		}
 
 		#endregion Constructors
 
 		#region Properties
 
-		public EventProxy Proxy
+        public string Sink
 		{
 			get
 			{
-				return proxy;
+				return sink;
 			}
 		}
 

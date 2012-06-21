@@ -34,7 +34,7 @@ namespace Remoting.Core
 		#region Fields
 
 		private bool disposed = false;
-		private List<EventProxy> proxies = new List<EventProxy>();
+        private Dictionary<string, EventProxy> proxies = new Dictionary<string, EventProxy>();
 
 		#endregion Fields
 
@@ -71,9 +71,9 @@ namespace Remoting.Core
 		{
 			lock (this)
 			{
-				if (FindSink(proxy.Sink) == null)
+                if (!proxies.ContainsKey(proxy.Sink))
 				{
-					proxies.Add(proxy);
+                    proxies.Add(proxy.Sink, proxy);
 					OnClientAdded(new ClientAddedEventArgs(proxy));
 				}
 				OnMessageReceived(new MessageReceivedEventArgs(proxy.Sink, data));
@@ -85,19 +85,9 @@ namespace Remoting.Core
 		{
 			lock (this)
 			{
-				EventProxy proxy = FindSink(sink);
-				if (proxy != null)
+                if (proxies.ContainsKey(sink))
 				{
-					Console.WriteLine("Sink: {0}", proxy.Sink);
-					proxy.DispatchEvent(new EventDispatchedEventArgs(proxy.Sink, data));
-				}
-				else
-				{
-					Console.WriteLine("Sink is null!");
-					foreach (EventProxy ep in proxies)
-					{
-						Console.WriteLine("EP: {0}", ep.Sink);
-					}
+                    proxies[sink].DispatchEvent(new EventDispatchedEventArgs(sink, data));
 				}
 			}
 		}
@@ -132,26 +122,6 @@ namespace Remoting.Core
 			{
 				RemotingServices.Disconnect(byRefObject);
 			}
-		}
-
-		private EventProxy FindSink(string sink)
-		{
-			for (int i = 0; i < proxies.Count; i++)
-			{
-				try
-				{
-					EventProxy proxy = proxies[i];
-					if (proxy.Sink == sink)
-					{
-						return proxy;
-					}
-				}
-				catch (SocketException)
-				{
-					proxies.RemoveAt(i--);
-				}
-			}
-			return null;
 		}
 
 		private void OnClientAdded(ClientAddedEventArgs e)

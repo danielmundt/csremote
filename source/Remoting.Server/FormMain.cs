@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Net.Sockets;
 using System.Runtime.Remoting;
 using System.Text;
 using System.Windows.Forms;
@@ -79,7 +80,7 @@ namespace Remoting.Server
 		void service_ClientAdded(object sender, ClientAddedEventArgs e)
 		{
 			SetText(string.Format("Client ID registered: {0}{1}",
-				e.Proxy.Sink, Environment.NewLine));
+				e.Sink, Environment.NewLine));
 		}
 
 		void service_MessageReceived(object sender, MessageReceivedEventArgs e)
@@ -87,8 +88,15 @@ namespace Remoting.Server
 			SetText(string.Format("Message arrived: {0}{1}",
 				e.Data, Environment.NewLine));
 
-			// echo message to subscribed client
-			service.DispatchEvent(e.Sink, e.Data);
+            try
+            {
+			    // echo message to subscribed client
+			    service.DispatchEvent(e.Sink, e.Data);
+            }
+            catch (SocketException)
+            {
+                Console.WriteLine("Sink not found: {0}", e.Sink);
+            }
 		}
 
 		private void SetText(string text)

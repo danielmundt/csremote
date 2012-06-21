@@ -32,6 +32,7 @@ using System.Windows.Forms;
 using Remoting.Core;
 using Remoting.Core.Channels;
 using Remoting.Core.Events;
+using Remoting.Core.Exceptions;
 
 namespace Remoting.Client
 {
@@ -68,16 +69,20 @@ namespace Remoting.Client
 
 		private void DispatchCall()
 		{
-			try
-			{
-				EventProxy proxy = new EventProxy(tbClientId.Text);
-				proxy.EventDispatched += new EventHandler<EventDispatchedEventArgs>(proxy_EventDispatched);
-				service.DispatchCall(proxy, "Hello World");
-			}
-			catch (RemotingException ex)
-			{
-				MessageBox.Show(this, ex.Message, "Error");
-			}
+            try
+            {
+                EventProxy proxy = new EventProxy(tbClientId.Text);
+                proxy.EventDispatched += new EventHandler<EventDispatchedEventArgs>(proxy_EventDispatched);
+                service.DispatchCall(proxy, "Hello World");
+            }
+            catch (RemotingException ex)
+            {
+                MessageBox.Show(this, ex.Message, "Error");
+            }
+            catch (SinkNotFoundException ex)
+            {
+                MessageBox.Show(this, ex.Message, "Error");
+            }
 		}
 
 		private void FormMain_Load(object sender, EventArgs e)

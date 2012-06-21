@@ -34,7 +34,7 @@ namespace Remoting.Core
 		#region Fields
 
 		private bool disposed = false;
-		private Dictionary<string, EventProxy> proxies = new Dictionary<string, EventProxy>();
+        private Dictionary<string, EventProxy> proxies = new Dictionary<string, EventProxy>();
 
 		#endregion Fields
 
@@ -71,9 +71,9 @@ namespace Remoting.Core
 		{
 			lock (this)
 			{
-				if (!proxies.ContainsKey(proxy.Sink))
+                if (!proxies.ContainsKey(proxy.Sink))
 				{
-					proxies.Add(proxy.Sink, proxy);
+                    proxies.Add(proxy.Sink, proxy);
 					OnClientAdded(new ClientAddedEventArgs(proxy));
 				}
 				OnMessageReceived(new MessageReceivedEventArgs(proxy.Sink, data));
@@ -85,9 +85,9 @@ namespace Remoting.Core
 		{
 			lock (this)
 			{
-				if (proxies.ContainsKey(sink))
+                if (proxies.ContainsKey(sink))
 				{
-					proxies[sink].DispatchEvent(new EventDispatchedEventArgs(sink, data));
+                    proxies[sink].DispatchEvent(new EventDispatchedEventArgs(sink, data));
 				}
 			}
 		}

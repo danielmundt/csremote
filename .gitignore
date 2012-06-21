@@ -167,3 +167,4 @@ pip-log.txt
 # Project specific stuff
 narrange.bat
 tools
+*.lnk

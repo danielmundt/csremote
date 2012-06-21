@@ -88,16 +88,7 @@ namespace Remoting.Core
 				EventProxy proxy = FindSink(sink);
 				if (proxy != null)
 				{
-					Console.WriteLine("Sink: {0}", proxy.Sink);
 					proxy.DispatchEvent(new EventDispatchedEventArgs(proxy.Sink, data));
-				}
-				else
-				{
-					Console.WriteLine("Sink is null!");
-					foreach (EventProxy ep in proxies)
-					{
-						Console.WriteLine("EP: {0}", ep.Sink);
-					}
 				}
 			}
 		}

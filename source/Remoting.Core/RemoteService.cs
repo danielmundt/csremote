@@ -21,19 +21,30 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.Remoting;
 using System.Text;
 
 using Remoting.Core.Events;
 
 namespace Remoting.Core
 {
-	public class RemoteService : MarshalByRefObject, IRemoteService
+	public class RemoteService : MarshalByRefObject, IRemoteService, IDisposable
 	{
 		#region Fields
 
+		private bool disposed = false;
 		private List<EventProxy> eventProxies = new List<EventProxy>();
 
 		#endregion Fields
+
+		#region Constructors
+
+		~RemoteService()
+		{
+			Dispose(false);
+		}
+
+		#endregion Constructors
 
 		#region Events
 
@@ -42,6 +53,15 @@ namespace Remoting.Core
 		public event EventHandler<MessageReceivedEventArgs> MessageReceived;
 
 		#endregion Events
+
+		#region Properties
+
+		protected virtual IEnumerable<MarshalByRefObject> NestedMarshalByRefObjects
+		{
+			get { yield break; }
+		}
+
+		#endregion Properties
 
 		#region Methods
 
@@ -69,10 +89,36 @@ namespace Remoting.Core
 			}
 		}
 
-		public override object InitializeLifetimeService()
+		public void Dispose()
+		{
+			GC.SuppressFinalize(this);
+			Dispose(true);
+		}
+
+		public override sealed object InitializeLifetimeService()
 		{
 			// indicate that this lease never expires
 			return null;
+		}
+
+		protected virtual void Dispose(bool disposing)
+		{
+			if (disposed)
+			{
+				return;
+			}
+
+			Disconnect();
+			disposed = true;
+		}
+
+		private void Disconnect()
+		{
+			RemotingServices.Disconnect(this);
+			foreach (var tmp in NestedMarshalByRefObjects)
+			{
+				RemotingServices.Disconnect(tmp);
+			}
 		}
 
 		private void OnClientAdded(ClientAddedEventArgs e)

@@ -21,16 +21,18 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.Remoting;
 using System.Text;
 
 using Remoting.Core.Events;
 
 namespace Remoting.Core
 {
-	public class EventProxy : MarshalByRefObject
+	public class EventProxy : MarshalByRefObject, IDisposable
 	{
 		#region Fields
 
+		private bool disposed = false;
 		private String sink;
 
 		#endregion Fields
@@ -40,6 +42,11 @@ namespace Remoting.Core
 		public EventProxy(String sink)
 		{
 			this.sink = sink;
+		}
+
+		~EventProxy()
+		{
+			Dispose(false);
 		}
 
 		#endregion Constructors
@@ -68,6 +75,11 @@ namespace Remoting.Core
 			}
 		}
 
+		protected virtual IEnumerable<MarshalByRefObject> NestedMarshalByRefObjects
+		{
+			get { yield break; }
+		}
+
 		#endregion Properties
 
 		#region Methods
@@ -79,6 +91,12 @@ namespace Remoting.Core
 				// asynchronous event dispatching
 				EventDispatched.BeginInvoke(this, e, null, null);
 			}
+		}
+
+		public void Dispose()
+		{
+			GC.SuppressFinalize(this);
+			Dispose(true);
 		}
 
 		public override bool Equals(Object obj)
@@ -112,10 +130,30 @@ namespace Remoting.Core
 			return (sink.GetHashCode() ^ EventHandler.GetHashCode());
 		}
 
-		public override object InitializeLifetimeService()
+		public override sealed object InitializeLifetimeService()
 		{
 			// indicate that this lease never expires
 			return null;
+		}
+
+		protected virtual void Dispose(bool disposing)
+		{
+			if (disposed)
+			{
+				return;
+			}
+
+			Disconnect();
+			disposed = true;
+		}
+
+		private void Disconnect()
+		{
+			RemotingServices.Disconnect(this);
+			foreach (var tmp in NestedMarshalByRefObjects)
+			{
+				RemotingServices.Disconnect(tmp);
+			}
 		}
 
 		#endregion Methods

@@ -32,6 +32,7 @@ using System.Windows.Forms;
 using Remoting.Core;
 using Remoting.Core.Channels;
 using Remoting.Core.Events;
+using Remoting.Core.Exceptions;
 
 namespace Remoting.Server
 {
@@ -100,9 +101,10 @@ namespace Remoting.Server
 				// echo message to subscribed client
 				service.DispatchEvent(e.Sink, e.Data);
 			}
-			catch (SocketException)
+			catch (SinkNotFoundException ex)
 			{
-				Console.WriteLine("Sink not found: {0}", e.Sink);
+				SetText(string.Format("Error: {0}{1}",
+					ex.Message, Environment.NewLine));
 			}
 		}
 

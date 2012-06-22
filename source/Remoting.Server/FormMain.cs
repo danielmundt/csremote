@@ -71,6 +71,7 @@ namespace Remoting.Server
 				if (service != null)
 				{
 					service.ClientAdded += new EventHandler<ClientAddedEventArgs>(service_ClientAdded);
+					service.ClientRemoved += new EventHandler<ClientRemovedEventArgs>(service_ClientRemoved);
 					service.MessageReceived += new EventHandler<MessageReceivedEventArgs>(service_MessageReceived);
 					channel.RegisterService(service);
 				}
@@ -79,7 +80,13 @@ namespace Remoting.Server
 
 		void service_ClientAdded(object sender, ClientAddedEventArgs e)
 		{
-			SetText(string.Format("Client ID registered: {0}{1}",
+			SetText(string.Format("Client added: {0}{1}",
+				e.Sink, Environment.NewLine));
+		}
+
+		void service_ClientRemoved(object sender, ClientRemovedEventArgs e)
+		{
+			SetText(string.Format("Client removed: {0}{1}",
 				e.Sink, Environment.NewLine));
 		}
 
@@ -88,15 +95,15 @@ namespace Remoting.Server
 			SetText(string.Format("Message arrived: {0}{1}",
 				e.Data, Environment.NewLine));
 
-            try
-            {
-			    // echo message to subscribed client
-			    service.DispatchEvent(e.Sink, e.Data);
-            }
-            catch (SocketException)
-            {
-                Console.WriteLine("Sink not found: {0}", e.Sink);
-            }
+			try
+			{
+				// echo message to subscribed client
+				service.DispatchEvent(e.Sink, e.Data);
+			}
+			catch (SocketException)
+			{
+				Console.WriteLine("Sink not found: {0}", e.Sink);
+			}
 		}
 
 		private void SetText(string text)

@@ -1,4 +1,4 @@
-﻿#region Header
+#region Header
 
 // Copyright (C) 2012 Daniel Schubert
 //
@@ -22,43 +22,102 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System.Security.Permissions;
 using System.Text;
 
 namespace Remoting.Core.Exceptions
 {
-    [Serializable]
-    public class SinkNotFoundException : Exception
-    {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ServerException"/> class.
-        /// </summary>
-        public SinkNotFoundException() {
-        }
+	[Serializable]
+	public class SinkNotFoundException : Exception, ISerializable
+	{
+		#region Fields
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ServerException"/> class with
-        /// a specified error message.
-        /// </summary>
-        public SinkNotFoundException(string message) : base(message)
-        {
-        }
+		private string sink;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ServerException"/> class with
-        /// a specified error message and a reference to the inner exception that is a cause
-        /// of this exception.
-        /// </summary>
-        public SinkNotFoundException(string message, Exception inner) : base(message, inner)
-        {
-        }
+		#endregion Fields
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ServerException"/> class with
-        /// serialized data.
-        /// </summary>
-        protected SinkNotFoundException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
-    }
+		#region Constructors
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="SinkNotFoundException"/> class.
+		/// </summary>
+		public SinkNotFoundException()
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="SinkNotFoundException"/> class with
+		/// a specified error message and a sink ID.
+		/// </summary>
+		public SinkNotFoundException(string message, string sink)
+			: base(message)
+		{
+			this.sink = sink;
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="SinkNotFoundException"/> class with
+		/// a specified error message.
+		/// </summary>
+		public SinkNotFoundException(string message)
+			: base(message)
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="SinkNotFoundException"/> class with
+		/// a specified error message and a reference to the inner exception that is a cause
+		/// of this exception.
+		/// </summary>
+		public SinkNotFoundException(string message, Exception inner)
+			: base(message, inner)
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="SinkNotFoundException"/> class with
+		/// serialized data.
+		/// </summary>
+		protected SinkNotFoundException(SerializationInfo info, StreamingContext context)
+			: base(info, context)
+		{
+			if (info != null)
+			{
+				sink = info.GetString("sink");
+			}
+		}
+
+		#endregion Constructors
+
+		#region Properties
+
+		public string Sink
+		{
+			get
+			{
+				return sink;
+			}
+		}
+
+		#endregion Properties
+
+		#region Methods
+
+		/// <summary>
+		/// When overridden in a derived class, sets the <see cref="SinkNotFoundException"/>
+		/// class with information about the exception. Performs a custom serialization.
+		/// </summary>
+		[SecurityPermission(SecurityAction.Demand, SerializationFormatter=true)]
+		public override void GetObjectData(SerializationInfo info, StreamingContext context)
+		{
+			base.GetObjectData(info, context);
+
+			if (info != null)
+			{
+				info.AddValue("sink", sink);
+			}
+		}
+
+		#endregion Methods
+	}
 }

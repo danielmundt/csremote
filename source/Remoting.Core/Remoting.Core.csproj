@@ -42,6 +42,7 @@
     <Compile Include="Channels\ClientChannel.cs" />
     <Compile Include="EventProxy.cs" />
     <Compile Include="Events\ClientAddedEventArgs.cs" />
+    <Compile Include="Events\ClientRemovedEventArgs.cs" />
     <Compile Include="Events\EventDispatchedEventArgs.cs" />
     <Compile Include="Events\MessageReceivedEventArgs.cs" />
     <Compile Include="Channels\IChannel.cs" />

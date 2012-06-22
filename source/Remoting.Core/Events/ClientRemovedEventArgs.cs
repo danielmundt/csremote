@@ -28,7 +28,7 @@ using Remoting.Core;
 namespace Remoting.Core.Events
 {
 	[Serializable]
-	public class ClientAddedEventArgs : EventArgs
+	public class ClientRemovedEventArgs : EventArgs
 	{
 		#region Fields
 
@@ -38,7 +38,7 @@ namespace Remoting.Core.Events
 
 		#region Constructors
 
-		public ClientAddedEventArgs(string sink)
+		public ClientRemovedEventArgs(string sink)
 		{
 			this.sink = sink;
 		}

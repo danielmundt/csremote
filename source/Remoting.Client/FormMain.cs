@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Net.Sockets;
 using System.Runtime.Remoting;
 using System.Text;
 using System.Threading;
@@ -74,6 +75,10 @@ namespace Remoting.Client
 				EventProxy proxy = new EventProxy(tbClientId.Text);
 				proxy.EventDispatched += new EventHandler<EventDispatchedEventArgs>(proxy_EventDispatched);
 				service.DispatchCall(proxy, "Hello World");
+			}
+			catch (SocketException ex)
+			{
+				MessageBox.Show(this, ex.Message, "Error");
 			}
 			catch (RemotingException ex)
 			{

@@ -171,13 +171,10 @@ namespace Remoting.Core
 
 		private void OnMessageReceived(MessageReceivedEventArgs e)
 		{
-			lock (this)
+			if (MessageReceived != null)
 			{
-				if (MessageReceived != null)
-				{
-					// asynchronous event dispatching
-					MessageReceived.BeginInvoke(this, e, null, null);
-				}
+				// asynchronous event dispatching
+				MessageReceived.BeginInvoke(this, e, null, null);
 			}
 		}
 

@@ -1,0 +1,1 @@
+This is a simple C# .Net remoting based communication framework.
